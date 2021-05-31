@@ -108,7 +108,7 @@ class InventorierForm extends React.Component
                     <Text style={styles.title_container}>{"Inventaire en cours : " + this.state.inventory_token.name}</Text>
                     <Text style={{color:'white'}}>{"Id de l'inventaire " + this.state.inventory_token.id + " | Date du "+ this.state.inventory_token.date}</Text>
                 </TouchableOpacity>
-                {this.props.user_token.isAdmin &&
+                {this.props.user_token.isAdmin == 'true' &&
                 <View style={styles.checkbox_container}>
                     <Text>{this.state.withQuantity ? "Inventaire quantitatif" : "Inventaire unitaire"}</Text>
                     <CheckBox style={{margin:5}} value={this.state.withQuantity} onValueChange={(withQuantity) => this.setState({ withQuantity })} />
