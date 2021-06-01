@@ -33,7 +33,7 @@ class Home extends React.Component
                     onPress={() => {this.accessMenu("Détails Inventaires")}}>
                         <Text style={styles.textButtonContainer}>Détails</Text>
                     </TouchableOpacity>
-                    {this.props.user_token.isAdmin == 'true' &&
+                    {this.props.user_token.isAdmin == 1 &&
                     <TouchableOpacity 
                     style={[styles.buttonContainer, {backgroundColor:'#c7e0f4'}]}
                     onPress={() => {this.accessMenu("Configuration")}}>

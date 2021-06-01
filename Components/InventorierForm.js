@@ -4,7 +4,10 @@ import CheckBox from '@react-native-community/checkbox';
 import { color } from 'react-native-reanimated'
 import { connect } from 'react-redux'
 import '../global'
+import Database from '../Storage/Database'
 
+
+const db = new Database()
 
 class InventorierForm extends React.Component
 {
@@ -20,6 +23,7 @@ class InventorierForm extends React.Component
             message_barcode: '',
             message_location: '',
             message:'',
+            configuration:[],
             withQuantity: global.withQuantity,
             withLocationVerification : global.withLocationVerification,
             withBarcodeVerification : global.withBarcodeVerification
@@ -48,11 +52,17 @@ class InventorierForm extends React.Component
             this.setState({isFormValid: false})
         }
     }
+    
+    getConfigurationList = () => {
+       db.getConfiguration().then((data) => {this.setState({configuration: data})})
+    }
 
     componentDidMount(){
         //const { navigation, route } = this.props;
         const inventory_token_const = this.props.route.params.inventory_token
         this.setState({inventory_token: inventory_token_const})
+        this.getConfigurationList()
+        //this.setState({withQuantity: })
     }
 
     _verify_barcode() {
@@ -91,10 +101,13 @@ class InventorierForm extends React.Component
     }
 
     _submit() {
-        const to_send = {id:global.tab_id++, location:this.state.location, barcode:this.state.barcode, quantity:Number(this.state.quantity), inventory_id:this.state.inventory_token.id, user_id:this.props.user_token.id}
-        global.tab.push(to_send)
-        this.setState({message: 'Article ' + this.state.barcode+' Enregistré'})
-        this._reset_form_values()
+        db.addDetailInventaire([this.state.inventory_token.id, this.state.location, this.state.barcode, Number(this.state.quantity), this.props.user_token.id])
+            .then(() =>{
+                this.setState({message: 'Article ' + this.state.barcode+' Enregistré'})
+                this._reset_form_values()
+            })
+        /*const to_send = {id:global.tab_id++, location:this.state.location, barcode:this.state.barcode, quantity:Number(this.state.quantity), inventory_id:this.state.inventory_token.id, user_id:this.props.user_token.id}
+        global.tab.push(to_send)*/
     }
 
     accessInventoryDetails = (item) => {
@@ -108,7 +121,7 @@ class InventorierForm extends React.Component
                     <Text style={styles.title_container}>{"Inventaire en cours : " + this.state.inventory_token.name}</Text>
                     <Text style={{color:'white'}}>{"Id de l'inventaire " + this.state.inventory_token.id + " | Date du "+ this.state.inventory_token.date}</Text>
                 </TouchableOpacity>
-                {this.props.user_token.isAdmin == 'true' &&
+                {this.props.user_token.isAdmin == 1 &&
                 <View style={styles.checkbox_container}>
                     <Text>{this.state.withQuantity ? "Inventaire quantitatif" : "Inventaire unitaire"}</Text>
                     <CheckBox style={{margin:5}} value={this.state.withQuantity} onValueChange={(withQuantity) => this.setState({ withQuantity })} />

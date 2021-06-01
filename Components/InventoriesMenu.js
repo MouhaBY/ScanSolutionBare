@@ -1,15 +1,26 @@
 import React from 'react'
 import {View, Text, StyleSheet, Button, Image, Alert, TextInput, FlatList, TouchableOpacity} from 'react-native'
 import {connect} from 'react-redux'
-import {inventaires} from '../Helpers/data'
+import Database from '../Storage/Database'
 
+
+const db = new Database()
 
 class Inventories extends React.Component 
 {
     constructor(props){
         super(props)
         this.state = {
+            inventaires : []
         }
+    }
+
+    getInventoriesList = () => {
+        db.getInventaires().then((data) => { this.setState({inventaires:data}) })
+    }
+
+    componentDidMount(){
+        this.getInventoriesList()
     }
 
     accessInventory = (item) => {
@@ -22,8 +33,8 @@ class Inventories extends React.Component
                 <Text style={styles.textContainer}>Choix d'inventaire à traiter</Text>
                 <FlatList 
                     style= {styles.mainList}
-                    data={inventaires}
-                    keyExtractor={(item) => item.id.toString()}
+                    data={this.state.inventaires}
+                    keyExtractor={(item) => item.id}
                     renderItem={({item}) => (
                     <TouchableOpacity
                     onPress = {() => this.accessInventory(item)} 

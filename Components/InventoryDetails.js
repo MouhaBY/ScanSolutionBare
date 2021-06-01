@@ -1,7 +1,10 @@
 import React from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native'
 import '../global'
+import Database from '../Storage/Database'
 
+
+const db = new Database()
 
 export default class InventoryDetails extends React.Component {
     constructor(props){
@@ -12,18 +15,20 @@ export default class InventoryDetails extends React.Component {
         }
     }
 
-    get_inventory_details(id_inv){
-        const newData = global.tab.filter((item) => item.inventory_id.toString() === id_inv.toString())
-        return(newData)
+    get_inventory_details = (id_inv) => {
+        db.getDetailsInventaires(id_inv).then((data) => {this.setState({inventorylist:data})}).catch(()=>{console.log('catch')})
+        /*const newData = global.tab.filter((item) => item.inventory_id == id_inv.toString())
+        return(newData)*/
     }
 
     componentDidMount(){
         const { navigation, route } = this.props;
         const inventory_token_const = route.params.inventory_token
         this.setState({inventory_token: inventory_token_const})
-        const inventorylist_const = this.get_inventory_details(inventory_token_const.id)
-        this.setState({inventorylist: inventorylist_const})
-      }
+        this.get_inventory_details(inventory_token_const.id)
+        //const inventorylist_const = this.get_inventory_details(inventory_token_const.id)
+        //this.setState({inventorylist: inventorylist_const})
+    }
 
     _deleteRow(item_to_delete) {
         Alert.alert('Supprimer', 'Êtes vous sur de supprimer cette ligne ?', 
@@ -62,7 +67,7 @@ export default class InventoryDetails extends React.Component {
                     </View>
                     <FlatList
                         data={this.state.inventorylist}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item) => item.id}
                         renderItem={this._renderItem}
                         >
                     </FlatList>

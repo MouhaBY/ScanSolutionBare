@@ -1,9 +1,8 @@
 import React from 'react'
 import {View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback} from 'react-native'
 import { connect } from 'react-redux'
-import {users} from '../Helpers/data'
 import Database from '../Storage/Database'
-//import {searchUser} from '../Storage/Database'
+
 
 const db = new Database()
 

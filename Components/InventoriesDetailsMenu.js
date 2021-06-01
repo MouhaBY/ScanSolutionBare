@@ -1,27 +1,39 @@
 import React from 'react'
 import {View, Text, StyleSheet, Button, Image, Alert, TextInput, FlatList, TouchableOpacity} from 'react-native'
-import {inventaires} from '../Helpers/data'
+import Database from '../Storage/Database'
 
+
+const db = new Database()
 
 class InventoriesDetailsMenu extends React.Component 
 {
     constructor(props){
         super(props)
-        this.state = {}
+        this.state = {
+            inventaires: []
+        }
     }
 
     accessInventoryDetails = (item) => {
        this.props.navigation.navigate("Détails", {inventory_token:item})
       }
     
+    getInventoriesList = () => {
+        db.getInventaires().then((data) => {this.setState({inventaires:data}) })
+    }
+
+    componentDidMount(){
+        this.getInventoriesList()
+    }
+
     render(){
         return(
             <View style={styles.mainContainer}>
                 <Text style={styles.textContainer}>Choix d'inventaire à consulter</Text>
                 <FlatList 
                     style= {styles.mainList}
-                    data={inventaires}
-                    keyExtractor={(item) => item.id.toString()}
+                    data={this.state.inventaires}
+                    keyExtractor={(item) => item.id}
                     renderItem={({item}) => (
                     <TouchableOpacity
                     onPress = {() => this.accessInventoryDetails(item)} 
