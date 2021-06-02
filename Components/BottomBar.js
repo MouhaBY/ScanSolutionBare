@@ -2,6 +2,7 @@ import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import { connect } from 'react-redux'
 
+
 class BottomBar extends React.Component
 {
     constructor(props){

@@ -11,7 +11,10 @@ class Inventories extends React.Component
     constructor(props){
         super(props)
         this.state = {
-            inventaires : []
+            inventaires : [],
+            toAdd: false,
+            inventaire_to_add:'',
+            isFormValid:false,
         }
     }
 
@@ -25,12 +28,54 @@ class Inventories extends React.Component
 
     accessInventory = (item) => {
         this.props.navigation.navigate("Inventorier", {inventory_token:item})
-      }
+    }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.inventaire_to_add !== prevState.inventaire_to_add){
+            this.validateForm()
+        }
+    }
+
+    validateForm = () => {
+        if (this.state.inventaire_to_add !== '') {
+            this.setState({isFormValid: true})
+        }
+        else{
+            this.setState({isFormValid: false})
+        }
+    }
+
+    _reset_form_values(){
+        this.setState({inventaire_to_add: ''})
+    }
+    
     render(){
         return(
             <View style={styles.mainContainer}>
                 <Text style={styles.textContainer}>Choix d'inventaire à traiter</Text>
+                <TouchableOpacity onPress = {() => this.setState({ toAdd: !this.state.toAdd })}  style={styles.addButton}>
+                    <Text style={{color:'white', height: 30, padding:3}}>Ajouter inventaire</Text>
+                </TouchableOpacity>
+                {this.state.toAdd &&
+                <View style={{flexDirection:'row'}}>
+                    <TextInput 
+                    style={{margin:1, flex:1}} 
+                    placeholder="Nouveau inventaire"
+                    value={this.state.inventaire_to_add} 
+                    onChangeText={(inventaire_to_add) => this.setState({ inventaire_to_add })} />
+                <Button 
+                title='Add'
+                disabled={!this.state.isFormValid}
+                onPress={() => {
+                    let today = new Date()
+                    let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
+                    this.setState({ toAdd: !this.state.toAdd })
+                    db.insertInventaire([this.state.inventaire_to_add,completeDate])
+                    this._reset_form_values()
+                    this.componentDidMount()
+                }}/>
+                </View>
+                }
                 <FlatList 
                     style= {styles.mainList}
                     data={this.state.inventaires}
@@ -74,6 +119,12 @@ const styles = StyleSheet.create(
             margin: 1,
             backgroundColor: "#2196F3"
         },
+        addButton:{
+            backgroundColor:'grey', 
+            margin:1, 
+            alignItems:'center',
+            justifyContent:'center'
+        }
     }
 )
 

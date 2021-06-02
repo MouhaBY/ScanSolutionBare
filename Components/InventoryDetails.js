@@ -1,6 +1,5 @@
 import React from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native'
-import '../global'
 import Database from '../Storage/Database'
 
 
@@ -11,14 +10,14 @@ export default class InventoryDetails extends React.Component {
         super(props)
         this.state={
             inventory_token: '',
-            inventorylist:[]
+            inventorylist: []
         }
     }
 
     get_inventory_details = (id_inv) => {
-        db.getDetailsInventaires(id_inv).then((data) => {this.setState({inventorylist:data})}).catch(()=>{console.log('catch')})
-        /*const newData = global.tab.filter((item) => item.inventory_id == id_inv.toString())
-        return(newData)*/
+        db.getDetailsInventaires(id_inv)
+        .then((data) => { this.setState({inventorylist:data}) })
+        .catch(()=>{ console.log('catch') })
     }
 
     componentDidMount(){
@@ -26,18 +25,16 @@ export default class InventoryDetails extends React.Component {
         const inventory_token_const = route.params.inventory_token
         this.setState({inventory_token: inventory_token_const})
         this.get_inventory_details(inventory_token_const.id)
-        //const inventorylist_const = this.get_inventory_details(inventory_token_const.id)
-        //this.setState({inventorylist: inventorylist_const})
     }
 
     _deleteRow(item_to_delete) {
         Alert.alert('Supprimer', 'Êtes vous sur de supprimer cette ligne ?', 
-        [   { text: 'Annuler',},
-            { text: 'Confirmer', onPress: () => {
-                let newData = global.tab.filter((item) => item.id.toString() !== item_to_delete.toString())
-                global.tab = newData
-                this.componentDidMount()
-                }
+        [   { text: 'Annuler' },
+            { text: 'Confirmer', 
+            onPress: () => {
+                db.deleteDetailInventaire(item_to_delete)
+                this.get_inventory_details(this.state.inventory_token.id)
+            }
             },
         ])
     }
@@ -51,7 +48,7 @@ export default class InventoryDetails extends React.Component {
             <Text style={[styles.table_row_txt, {width: "20%"}]}>{item.quantity}</Text>
         </TouchableOpacity>
         )
-    
+
     render(){
         return(
             <View style={styles.main_container} >

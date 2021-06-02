@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, View, StyleSheet, TextInput, Button, TouchableOpacity, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
-import CheckBox from '@react-native-community/checkbox';
+import CheckBox from '@react-native-community/checkbox'
 import { color } from 'react-native-reanimated'
 import { connect } from 'react-redux'
 import '../global'
@@ -52,17 +52,10 @@ class InventorierForm extends React.Component
             this.setState({isFormValid: false})
         }
     }
-    
-    getConfigurationList = () => {
-       db.getConfiguration().then((data) => {this.setState({configuration: data})})
-    }
 
     componentDidMount(){
-        //const { navigation, route } = this.props;
         const inventory_token_const = this.props.route.params.inventory_token
         this.setState({inventory_token: inventory_token_const})
-        this.getConfigurationList()
-        //this.setState({withQuantity: })
     }
 
     _verify_barcode() {
@@ -106,8 +99,6 @@ class InventorierForm extends React.Component
                 this.setState({message: 'Article ' + this.state.barcode+' Enregistré'})
                 this._reset_form_values()
             })
-        /*const to_send = {id:global.tab_id++, location:this.state.location, barcode:this.state.barcode, quantity:Number(this.state.quantity), inventory_id:this.state.inventory_token.id, user_id:this.props.user_token.id}
-        global.tab.push(to_send)*/
     }
 
     accessInventoryDetails = (item) => {

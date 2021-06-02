@@ -4,8 +4,113 @@ import { openDatabase, } from 'react-native-sqlite-storage'
 export default class Database {
 
     initDB() {
-        const db = openDatabase({name: 'data.db', createFromLocation: 1})
+        const db = openDatabase({name: 'data.db'})
+        db.executeSql('SELECT 1 FROM Users LIMIT 1', [], ()=>{}, () => { this.createDatabase() })
         return(db)
+    }
+
+    createDatabase(){
+        console.log('creating database')
+        this.createTableUsers()
+        .then(()=>{ this.createTableConfiguration() })
+        .then(()=>{ this.createTableInventaires() })
+        .then(()=>{ this.createTableDetails() })
+        .then(()=>{ console.log('database created') })
+    }
+
+    createTableUsers(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS Users (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL UNIQUE, contact TEXT NOT NULL, isAdmin INTEGER NOT NULL DEFAULT 0)', [], 
+                (tx, results) => { 
+                    this.insertDefaultUsers()
+                    resolve(results) 
+                })
+            })
+        })
+    }
+
+    insertDefaultUsers(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'INSERT INTO Users (username, password, contact, isAdmin) VALUES ("123","123","MBY", 1), ("Test","test","MBY Test", 0)', [],
+                (tx, results) => { 
+                    resolve(results) 
+                    console.log('users inserted')
+                })
+            })
+        })
+    }
+
+    createTableConfiguration(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS Configuration (key TEXT UNIQUE PRIMARY KEY, state INTEGER NOT NULL DEFAULT 0)', [], 
+                (tx, results) => { 
+                    this.insertDefaultConfiguration()
+                    resolve(results) 
+                })
+            })
+        })
+    }
+
+    insertDefaultConfiguration(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'INSERT INTO Configuration (key, state) VALUES ("withLocationVerification", 0), ("withBarcodeVerification", 0), ("withQuantity", 0)', [],
+                (tx, results) => {
+                    resolve(results) 
+                    console.log('configuration inserted')
+                })
+            })
+        })
+    }
+
+    createTableInventaires(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS Inventaires (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT NOT NULL)', [], 
+                (tx, results) => { 
+                    resolve(results) 
+                })
+            })
+        })
+    }
+
+    insertInventaire(inventaire){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'INSERT INTO Inventaires (name, date) VALUES (?, ?)', inventaire,
+                (tx, results) => { 
+                    resolve(results) 
+                })
+            })
+        })
+    }
+
+    createTableDetails(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'CREATE TABLE IF NOT EXISTS Details (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, inventory_id INTEGER NOT NULL, location TEXT NOT NULL, barcode TEXT NOT NULL, quantity REAL NOT NULL, user_id INTEGER)', [], 
+                (tx, results) => { 
+                    resolve(results) 
+                })
+            })
+        })
     }
 
     searchUser(username) {
@@ -13,7 +118,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                'SELECT * FROM Users where username = ?', [username], 
+                'SELECT * FROM Users where username = ?', [username],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) {
@@ -106,13 +211,23 @@ export default class Database {
 
     addDetailInventaire(item) {
         const  db = this.initDB()
-        console.log(item)
         return new Promise((resolve) => {
             db.transaction((tx) => {
                 tx.executeSql('INSERT INTO Details (inventory_id, location, barcode, quantity, user_id) VALUES (?, ?, ?, ?, ?)', item,
                 (tx, results) => {
-                    console.log('done')
                     resolve(results)
+                })
+            })
+        })
+    }
+
+    deleteDetailInventaire(item_id){
+        const  db = this.initDB()
+        return new Promise((resolve) => {
+            db.transaction((tx) => {
+                tx.executeSql('DELETE FROM Details WHERE id = ?', [item_id],
+                ([tx, results]) => {
+                  resolve(results)
                 })
             })
         })
