@@ -40,9 +40,7 @@ class Inventories extends React.Component
         if (this.state.inventaire_to_add !== '') {
             this.setState({isFormValid: true})
         }
-        else{
-            this.setState({isFormValid: false})
-        }
+        else{ this.setState({isFormValid: false}) }
     }
 
     _reset_form_values(){
@@ -53,27 +51,31 @@ class Inventories extends React.Component
         return(
             <View style={styles.mainContainer}>
                 <Text style={styles.textContainer}>Choix d'inventaire à traiter</Text>
-                <TouchableOpacity onPress = {() => this.setState({ toAdd: !this.state.toAdd })}  style={styles.addButton}>
-                    <Text style={{color:'white', height: 30, padding:3}}>Ajouter inventaire</Text>
-                </TouchableOpacity>
-                {this.state.toAdd &&
-                <View style={{flexDirection:'row'}}>
-                    <TextInput 
-                    style={{margin:1, flex:1}} 
-                    placeholder="Nouveau inventaire"
-                    value={this.state.inventaire_to_add} 
-                    onChangeText={(inventaire_to_add) => this.setState({ inventaire_to_add })} />
-                <Button 
-                title='Add'
-                disabled={!this.state.isFormValid}
-                onPress={() => {
-                    let today = new Date()
-                    let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
-                    this.setState({ toAdd: !this.state.toAdd })
-                    db.insertInventaire([this.state.inventaire_to_add,completeDate])
-                    this._reset_form_values()
-                    this.componentDidMount()
-                }}/>
+                {this.props.user_token.isAdmin == 1 &&
+                <View>
+                    <TouchableOpacity onPress = {() => this.setState({ toAdd: !this.state.toAdd })}  style={styles.addButton}>
+                        <Text style={{color:'white', height: 30, padding:3}}>Ajouter inventaire</Text>
+                    </TouchableOpacity>
+                    {this.state.toAdd &&
+                    <View style={{flexDirection:'row'}}>
+                        <TextInput 
+                        style={{margin:1, flex:1}} 
+                        placeholder="Nouveau inventaire"
+                        value={this.state.inventaire_to_add} 
+                        onChangeText={(inventaire_to_add) => this.setState({ inventaire_to_add })} />
+                        <Button 
+                        title='Add'
+                        disabled={!this.state.isFormValid}
+                        onPress={() => {
+                            let today = new Date()
+                            let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
+                            this.setState({ toAdd: !this.state.toAdd })
+                            db.insertInventaire([this.state.inventaire_to_add,completeDate])
+                            this._reset_form_values()
+                            this.componentDidMount()
+                        }}/>
+                    </View>
+                    }
                 </View>
                 }
                 <FlatList 
@@ -131,6 +133,7 @@ const styles = StyleSheet.create(
 const mapStateToProps = (state) => {
     return {
         authenticated: state.authenticated,
+        user_token: state.user_token,
     }
   }
 

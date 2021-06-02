@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, TextInput, Button, TouchableOpacity, Alert, Key
 import CheckBox from '@react-native-community/checkbox'
 import { color } from 'react-native-reanimated'
 import { connect } from 'react-redux'
-import '../global'
 import Database from '../Storage/Database'
 
 
@@ -24,15 +23,15 @@ class InventorierForm extends React.Component
             message_location: '',
             message:'',
             configuration:[],
-            withQuantity: global.withQuantity,
-            withLocationVerification : global.withLocationVerification,
-            withBarcodeVerification : global.withBarcodeVerification
+            withQuantity: false,
+            withLocationVerification : true,
+            withBarcodeVerification : true
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.state.withQuantity !== prevState.withQuantity){
-            global.withQuantity = this.state.withQuantity
+            db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
         }
         if (this.state.location !== prevState.location || this.state.barcode !== prevState.barcode || this.state.quantity !== prevState.quantity){
             if(this.state.location !== '' && this.state.barcode !== '') {
@@ -45,25 +44,28 @@ class InventorierForm extends React.Component
     }
 
     validateForm = () => {
-        if (this.state.location !== "" && this.state.barcode !== "" && this.state.quantity > 0) {
-            this.setState({isFormValid: true})
-        }
-        else{
-            this.setState({isFormValid: false})
-        }
+        if (this.state.location !== "" && this.state.barcode !== "" && this.state.quantity > 0) { this.setState({isFormValid: true}) }
+        else { this.setState({isFormValid: false}) }
     }
+
+    cast_from_bool(bool_state){ if (bool_state == true){ return 1 } else { return 0} }
+
+    cast_to_bool(data_state){ if (data_state > 0) { return true } else { return false } }
 
     componentDidMount(){
         const inventory_token_const = this.props.route.params.inventory_token
         this.setState({inventory_token: inventory_token_const})
+        db.getConfiguration("withQuantity").then((data) => { this.setState({withQuantity: this.cast_to_bool(data.state)}) })
+        db.getConfiguration("withLocationVerification").then((data) => { this.setState({withLocationVerification: this.cast_to_bool(data.state)}) })
+        db.getConfiguration("withBarcodeVerification").then((data) => { this.setState({withBarcodeVerification: this.cast_to_bool(data.state)}) })
     }
 
-    _verify_barcode() {
+    _verify_barcode(){
         if (this.state.barcode > 10){ return(true) }
         else { return (false) }
     }
 
-    _verify_location() {
+    _verify_location(){
         if (this.state.location > 10){ return(true) }
         else { return (false) }    
     }

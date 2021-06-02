@@ -65,7 +65,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                    'INSERT INTO Configuration (key, state) VALUES ("withLocationVerification", 0), ("withBarcodeVerification", 0), ("withQuantity", 0)', [],
+                    'INSERT INTO Configuration (key, state) VALUES ("withLocationVerification", 1), ("withBarcodeVerification", 1), ("withQuantity", 0)', [],
                 (tx, results) => {
                     resolve(results) 
                     console.log('configuration inserted')
@@ -118,7 +118,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                'SELECT * FROM Users where username = ?', [username],
+                'SELECT * FROM Users WHERE username = ?', [username],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) {
@@ -156,24 +156,21 @@ export default class Database {
         })
     }
 
-    getConfiguration() {
+    getConfiguration(configuration_key) {
         const  db = this.initDB()
         return new Promise((resolve) => {
             const configuration = []
             db.transaction((tx) => {
                 tx.executeSql(
-                'SELECT key, state FROM Configuration', [],
+                'SELECT state FROM Configuration WHERE key = ?', [configuration_key],
                 (tx, results) => {
                     var len = results.rows.length
-                    for (let i = 0; i < len; i++) {
-                        let row = results.rows.item(i)
-                        const { key, state } = row
-                        configuration.push({
-                            key,
-                            state,
-                          })
-                    }   
-                    resolve(configuration)              
+                    if (len > 0) {
+                        resolve(results.rows.item(0))
+                    }
+                    else{
+                        reject('configuration introuvable')
+                    } 
                 })
             })
         })
@@ -228,6 +225,20 @@ export default class Database {
                 tx.executeSql('DELETE FROM Details WHERE id = ?', [item_id],
                 ([tx, results]) => {
                   resolve(results)
+                })
+            })
+        })
+    }
+
+    updateConfiguration(configuration_item){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'UPDATE Configuration SET state = ? WHERE key = ? ', configuration_item,
+                (tx, results) => {
+                    resolve(results) 
+                    console.log('configuration updated')
                 })
             })
         })
