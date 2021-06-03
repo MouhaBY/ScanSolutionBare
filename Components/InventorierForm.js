@@ -136,8 +136,7 @@ class InventorierForm extends React.Component
                         placeholder= "Code à barre"
                         onSubmitEditing={() => {
                             if (this.state.withQuantity){ this.thirdTextInput.focus() }
-                            else { if (this.state.location !== "" && this.state.barcode !== "") {this._verify_exists()} }
-                                        }}
+                            else { if (this.state.location !== "" && this.state.barcode !== "") {this._verify_exists()} } }}
                         />
                         <Text style={styles.error_message}>{this.state.message_barcode}</Text>
                         {this.state.withQuantity &&
