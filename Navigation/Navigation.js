@@ -12,6 +12,8 @@ import InventoryDetails from '../Components/InventoryDetails'
 import ConfigurationForm from '../Components/ConfigurationForm'
 import store from '../Store/configureStore'
 import SyncButton from '../Components/SyncButton'
+import Products from '../Components/Products'
+import Areas from '../Components/Areas'
 
 
 const Stack = createStackNavigator()
@@ -30,6 +32,8 @@ const SearchNavigation = () => {
                     <Stack.Screen name="Inventorier" component={InventorierForm}/>
                     <Stack.Screen name="Détails" component={InventoryDetails}/>
                     <Stack.Screen name="Configuration" component={ConfigurationForm}/>
+                    <Stack.Screen name="Articles" component={Products}/>
+                    <Stack.Screen name="Emplacements" component={Areas}/>
                 </Stack.Navigator>
             </NavigationContainer>
         )
@@ -38,7 +42,7 @@ const SearchNavigation = () => {
         return(
             <NavigationContainer>             
                 <Stack.Navigator>
-                    <Stack.Screen name="Connexion" component={LoginForm}/>
+                    <Stack.Screen name="Connexion" component={LoginForm} options={{headerRight:()=>(<SyncButton/>)}}/>
                 </Stack.Navigator>
             </NavigationContainer>
         )

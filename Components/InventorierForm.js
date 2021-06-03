@@ -60,33 +60,28 @@ class InventorierForm extends React.Component
         db.getConfiguration("withBarcodeVerification").then((data) => { this.setState({withBarcodeVerification: this.cast_to_bool(data.state)}) })
     }
 
-    _verify_barcode(){
-        if (this.state.barcode > 10){ return(true) }
-        else { return (false) }
-    }
-
-    _verify_location(){
-        if (this.state.location > 10){ return(true) }
-        else { return (false) }    
-    }
-
     _verify_exists(){
-        let to_submit = true
-        if (this.state.withLocationVerification){
-            if (!this._verify_location()){
-                to_submit = false
-                this.setState({message_location: 'Emplacement ' + this.state.location + ' non reconnu'})
-            }
-        }
         if (this.state.withBarcodeVerification){
-            if(!this._verify_barcode()){
-                to_submit = false
+            db.searchProduct(this.state.barcode)
+            .then(()=>{ 
+                if (this.state.withLocationVerification){
+                    db.searchArea(this.state.location)
+                    .then(()=>{ this.submit() })
+                    .catch(()=>{ this.setState({message_location: 'Emplacement ' + this.state.location + ' non reconnu'}) })
+                }
+                else { this.submit() }})
+            .catch(()=>{
                 this.setState({message_barcode: 'Article ' + this.state.barcode +  ' non reconnu'})
                 this.setState({barcode: ''})
-            }
+            })
         }
-        if (to_submit){
-            this._submit()
+        else {
+            if (this.state.withLocationVerification){
+                db.searchArea(this.state.location)
+                .then(()=>{ this.submit() })
+                .catch(()=>{ this.setState({message_location: 'Emplacement ' + this.state.location + ' non reconnu'}) })
+            }
+            else { this.submit() }
         }
     }
 
@@ -95,7 +90,7 @@ class InventorierForm extends React.Component
         this.setState({quantity: '1'})
     }
 
-    _submit() {
+    submit() {
         db.addDetailInventaire([this.state.inventory_token.id, this.state.location, this.state.barcode, Number(this.state.quantity), this.props.user_token.id])
             .then(() =>{
                 this.setState({message: 'Article ' + this.state.barcode+' Enregistré'})
@@ -103,9 +98,7 @@ class InventorierForm extends React.Component
             })
     }
 
-    accessInventoryDetails = (item) => {
-        this.props.navigation.navigate("Détails", {inventory_token:item})
-    }
+    accessInventoryDetails = (item) => { this.props.navigation.navigate("Détails", {inventory_token:item}) }
 
     render(){        
         return(

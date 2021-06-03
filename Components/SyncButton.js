@@ -1,6 +1,9 @@
 import React from 'react'
 import {TouchableOpacity, Text, Alert} from 'react-native'
+import Database from '../Storage/Database'
 
+
+const db = new Database()
 
 export default class SyncButton extends React.Component {
 
@@ -12,7 +15,7 @@ export default class SyncButton extends React.Component {
         return(
             <TouchableOpacity 
             style={{backgroundColor:'#D0312D', justifyContent:'center', height:"60%", marginRight:5}} 
-            onPress={()=>{Alert.alert('Synchronisation', 'Synchronisation effectuée')}}>
+            onPress={()=>{db.synchroniser(), Alert.alert('Synchronisation', 'Synchronisation effectuée')}}>
                 <Text style={{fontSize:12, margin: 3, color:'white'}}>Synchroniser</Text>
             </TouchableOpacity>
         )

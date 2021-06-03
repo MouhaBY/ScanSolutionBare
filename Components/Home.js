@@ -40,6 +40,18 @@ class Home extends React.Component
                         <Text style={styles.textButtonContainer}>Configuration</Text>
                     </TouchableOpacity>
                     }
+                    <View style={{flexDirection:'row',}}>
+                        <TouchableOpacity 
+                        style={styles.miniButtonContainer}
+                        onPress={() => {this.accessMenu("Articles")}}>
+                            <Text style={styles.textButtonContainer}>Articles</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                        style={styles.miniButtonContainer}
+                        onPress={() => {this.accessMenu("Emplacements")}}>
+                            <Text style={styles.textButtonContainer}>Empl.</Text>
+                        </TouchableOpacity>
+                    </View>
                     <TouchableOpacity 
                     style={[styles.buttonContainer, {backgroundColor:'#D0312D'}]}
                     onPress={() => {this.logout()}}>
@@ -56,9 +68,18 @@ const styles = StyleSheet.create({
     buttonContainer:{
         justifyContent:'center', 
         marginHorizontal:20, 
-        height: 55, 
-        marginTop: 20, 
+        height: 50,
+        marginTop: 20,
         borderRadius: 5 
+    },
+    miniButtonContainer:{
+        justifyContent:'center', 
+        marginLeft:20, 
+        width:"40%", 
+        height: 50, 
+        marginTop: 20, 
+        borderRadius: 5,
+        backgroundColor:'#004578'
     },
     textButtonContainer:{
         textAlign: 'center',

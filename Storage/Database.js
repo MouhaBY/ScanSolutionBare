@@ -3,20 +3,170 @@ import { openDatabase, } from 'react-native-sqlite-storage'
 
 export default class Database {
 
+    /****************************** Data base creation, manipulation and config ******************************/
+
     initDB() {
         const db = openDatabase({name: 'data.db'})
-        db.executeSql('SELECT 1 FROM Users LIMIT 1', [], ()=>{}, () => { this.createDatabase() })
         return(db)
     }
 
+    synchroniser(){ }
+
     createDatabase(){
-        console.log('creating database')
-        this.createTableUsers()
-        .then(()=>{ this.createTableConfiguration() })
-        .then(()=>{ this.createTableInventaires() })
-        .then(()=>{ this.createTableDetails() })
-        .then(()=>{ console.log('database created') })
+        const  db = this.initDB()
+        db.executeSql('SELECT 1 FROM Users LIMIT 1', [], ()=>{ console.log('database exists') }, () => {
+            console.log('creating database')
+            this.createTableUsers()
+            .then(()=>{ this.insertDefaultUsers() })
+            .then(()=>{ this.createTableConfiguration() })
+            .then(()=>{ this.insertDefaultConfiguration() })
+            .then(()=>{ this.createTableInventaires() })
+            .then(()=>{ this.createTableDetails() })
+            .then(()=>{ this.createTableProducts() })
+            .then(()=>{ this.insertDefaultProducts() })
+            .then(()=>{ this.createTableAreas() })
+            .then(()=>{ this.insertDefaultAreas() })
+            .then(()=>{ console.log('database created') })
+        })
     }
+
+    /****************************** Products Handling ******************************/
+
+    createTableProducts(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS Products (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
+                (tx, results) => {
+                    resolve(results)
+                    console.log('table products created')
+                })
+            })
+        })
+    }
+
+    insertDefaultProducts(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql( 'INSERT INTO Products (code, name) VALUES ("1", "Article 1"), ("2","Article 2")', [],
+                (tx, results) => {
+                    resolve(results) 
+                    console.log('products inserted')
+                })
+            })
+        })
+    }
+
+    getProducts() {
+        const  db = this.initDB()
+        return new Promise((resolve) => {
+            const products = []
+            db.transaction((tx) => {
+                tx.executeSql(
+                'SELECT id, code, name FROM Products', [],
+                (tx, results) => {
+                    var len = results.rows.length
+                    for (let i = 0; i < len; i++) {
+                        let row = results.rows.item(i)
+                        const { id, code, name } = row
+                        products.push({
+                            id,
+                            code,
+                            name
+                          })
+                    }   
+                    resolve(products)              
+                })
+            })
+        })
+    }
+    
+    searchProduct(barcode) {
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql( 'SELECT * FROM Products WHERE code = ?', [barcode],
+                (tx, results) => {
+                    var len = results.rows.length
+                    if (len > 0) { resolve(results.rows.item(0)) }
+                    else{ reject('article introuvable') }
+                })
+            })
+        })
+    }
+
+    /******************************Areas Handling ******************************/
+
+    createTableAreas(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS Areas (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
+                (tx, results) => { 
+                    resolve(results)
+                    console.log('table areas created')
+                })
+            })
+        })
+    }
+
+    insertDefaultAreas(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'INSERT INTO Areas (code, name) VALUES ("10", "Emp 1"), ("20","Emp 2")', [],
+                (tx, results) => { 
+                    resolve(results) 
+                    console.log('Areas inserted')
+                })
+            })
+        })
+    }
+
+    getAreas() {
+        const  db = this.initDB()
+        return new Promise((resolve) => {
+            const areas = []
+            db.transaction((tx) => {
+                tx.executeSql(
+                'SELECT id, code, name FROM Areas', [],
+                (tx, results) => {
+                    var len = results.rows.length
+                    for (let i = 0; i < len; i++) {
+                        let row = results.rows.item(i)
+                        const { id, code, name } = row
+                        areas.push({
+                            id,
+                            code,
+                            name
+                          })
+                    }   
+                    resolve(areas)              
+                })
+            })
+        })
+    }
+
+    searchArea(location) {
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'SELECT * FROM Areas WHERE code = ?', [location],
+                (tx, results) => {
+                    var len = results.rows.length
+                    if (len > 0) { resolve(results.rows.item(0)) }
+                    else{ reject('emplacement introuvable') }
+                })
+            })
+        })
+    }
+
+    /****************************** Users Handling ******************************/
 
     createTableUsers(){
         const  db = this.initDB()
@@ -25,8 +175,8 @@ export default class Database {
                 tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS Users (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL UNIQUE, contact TEXT NOT NULL, isAdmin INTEGER NOT NULL DEFAULT 0)', [], 
                 (tx, results) => { 
-                    this.insertDefaultUsers()
-                    resolve(results) 
+                    resolve(results)
+                    console.log('table users created')
                 })
             })
         })
@@ -46,15 +196,31 @@ export default class Database {
         })
     }
 
+    searchUser(username) {
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql( 'SELECT * FROM Users WHERE username = ?', [username],
+                (tx, results) => {
+                    var len = results.rows.length
+                    if (len > 0) { resolve(results.rows.item(0)) }
+                    else{ reject('utilisateur introuvable') }
+                })
+            })
+        })
+    }
+
+    /****************************** Configuration Handling ******************************/
+
     createTableConfiguration(){
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS Configuration (key TEXT UNIQUE PRIMARY KEY, state INTEGER NOT NULL DEFAULT 0)', [], 
-                (tx, results) => { 
-                    this.insertDefaultConfiguration()
+                (tx, results) => {
                     resolve(results) 
+                    console.log('table configuration created')
                 })
             })
         })
@@ -74,14 +240,47 @@ export default class Database {
         })
     }
 
+    getConfiguration(configuration_key) {
+        const  db = this.initDB()
+        return new Promise((resolve) => {
+            db.transaction((tx) => {
+                tx.executeSql( 'SELECT state FROM Configuration WHERE key = ?', [configuration_key],
+                (tx, results) => {
+                    var len = results.rows.length
+                    if (len > 0) { 
+                        resolve(results.rows.item(0)) 
+                        console.log('get configuration ' + configuration_key)
+                    }
+                    else{ reject('configuration introuvable') } 
+                })
+            })
+        })
+    }
+
+    updateConfiguration(configuration_item){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql( 'UPDATE Configuration SET state = ? WHERE key = ? ', configuration_item,
+                (tx, results) => {
+                    resolve(results) 
+                    console.log('configuration updated')
+                })
+            })
+        })
+    }
+
+    /****************************** Inventories Handling ******************************/
+
     createTableInventaires(){
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS Inventaires (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT NOT NULL)', [], 
-                (tx, results) => { 
+                (tx, results) => {
                     resolve(results) 
+                    console.log('table inventaires created')
                 })
             })
         })
@@ -91,11 +290,8 @@ export default class Database {
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
-                tx.executeSql(
-                    'INSERT INTO Inventaires (name, date) VALUES (?, ?)', inventaire,
-                (tx, results) => { 
-                    resolve(results) 
-                })
+                tx.executeSql( 'INSERT INTO Inventaires (name, date) VALUES (?, ?)', inventaire,
+                (tx, results) => { resolve(results) })
             })
         })
     }
@@ -105,28 +301,10 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                    'CREATE TABLE IF NOT EXISTS Details (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, inventory_id INTEGER NOT NULL, location TEXT NOT NULL, barcode TEXT NOT NULL, quantity REAL NOT NULL, user_id INTEGER)', [], 
+                    'CREATE TABLE IF NOT EXISTS Details (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, inventory_id INTEGER NOT NULL, location TEXT NOT NULL, barcode TEXT NOT NULL, quantity REAL NOT NULL, user_id INTEGER)', [], 
                 (tx, results) => { 
                     resolve(results) 
-                })
-            })
-        })
-    }
-
-    searchUser(username) {
-        const  db = this.initDB()
-        return new Promise((resolve, reject) => {
-            db.transaction((tx) => {
-                tx.executeSql(
-                'SELECT * FROM Users WHERE username = ?', [username],
-                (tx, results) => {
-                    var len = results.rows.length
-                    if (len > 0) {
-                        resolve(results.rows.item(0))
-                    }
-                    else{
-                        reject('utilisateur introuvable')
-                    }
+                    console.log('table details created')
                 })
             })
         })
@@ -135,42 +313,21 @@ export default class Database {
     getInventaires() {
         const  db = this.initDB()
         return new Promise((resolve) => {
-            const products = []
+            const inventaires = []
             db.transaction((tx) => {
-                tx.executeSql(
-                'SELECT id, name, date FROM Inventaires', [],
+                tx.executeSql('SELECT id, name, date FROM Inventaires', [],
                 (tx, results) => {
                     var len = results.rows.length
                     for (let i = 0; i < len; i++) {
                         let row = results.rows.item(i)
                         const { id, name, date } = row
-                        products.push({
+                        inventaires.push({
                             id,
                             name,
                             date
                           })
                     }   
-                    resolve(products)              
-                })
-            })
-        })
-    }
-
-    getConfiguration(configuration_key) {
-        const  db = this.initDB()
-        return new Promise((resolve) => {
-            const configuration = []
-            db.transaction((tx) => {
-                tx.executeSql(
-                'SELECT state FROM Configuration WHERE key = ?', [configuration_key],
-                (tx, results) => {
-                    var len = results.rows.length
-                    if (len > 0) {
-                        resolve(results.rows.item(0))
-                    }
-                    else{
-                        reject('configuration introuvable')
-                    } 
+                    resolve(inventaires)              
                 })
             })
         })
@@ -181,8 +338,7 @@ export default class Database {
         return new Promise((resolve) => {
             const details = []
             db.transaction((tx) => {
-                tx.executeSql(
-                'SELECT id, location, barcode, quantity FROM Details WHERE inventory_id = ?', [id_inventaire],
+                tx.executeSql('SELECT id, location, barcode, quantity FROM Details WHERE inventory_id = ?', [id_inventaire],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) {
@@ -198,9 +354,7 @@ export default class Database {
                         } 
                         resolve(details)  
                     }
-                    else{
-                        reject('inventaire introuvable')
-                    }
+                    else{ reject('inventaire introuvable') }
                 })
             })
         })
@@ -211,36 +365,15 @@ export default class Database {
         return new Promise((resolve) => {
             db.transaction((tx) => {
                 tx.executeSql('INSERT INTO Details (inventory_id, location, barcode, quantity, user_id) VALUES (?, ?, ?, ?, ?)', item,
-                (tx, results) => {
-                    resolve(results)
-                })
+                (tx, results) => { resolve(results) })
             })
         })
     }
 
     deleteDetailInventaire(item_id){
         const  db = this.initDB()
-        return new Promise((resolve) => {
-            db.transaction((tx) => {
-                tx.executeSql('DELETE FROM Details WHERE id = ?', [item_id],
-                ([tx, results]) => {
-                  resolve(results)
-                })
-            })
-        })
-    }
-
-    updateConfiguration(configuration_item){
-        const  db = this.initDB()
-        return new Promise((resolve, reject) => {
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'UPDATE Configuration SET state = ? WHERE key = ? ', configuration_item,
-                (tx, results) => {
-                    resolve(results) 
-                    console.log('configuration updated')
-                })
-            })
+        return new Promise((resolve) => { db.transaction((tx) => { tx.executeSql('DELETE FROM Details WHERE id = ?', [item_id], 
+            ([tx, results]) => { resolve(results) }) })
         })
     }
 
