@@ -60,28 +60,28 @@ class InventorierForm extends React.Component
         db.getConfiguration("withBarcodeVerification").then((data) => { this.setState({withBarcodeVerification: this.cast_to_bool(data.state)}) })
     }
 
-    _verify_exists(){
+    _verify_exists(inventory_row){
         if (this.state.withBarcodeVerification){
-            db.searchProduct(this.state.barcode)
+            db.searchProduct(inventory_row.Barcode)
             .then(()=>{ 
                 if (this.state.withLocationVerification){
-                    db.searchArea(this.state.location)
-                    .then(()=>{ this.submit() })
-                    .catch(()=>{ this.setState({message_location: 'Emplacement ' + this.state.location + ' non reconnu'}) })
+                    db.searchArea(inventory_row.Location)
+                    .then(()=>{ this.submit(inventory_row) })
+                    .catch(()=>{ this.setState({message_location: 'Emplacement ' + inventory_row.Location + ' non reconnu'}) })
                 }
-                else { this.submit() }})
+                else { this.submit(inventory_row) }})
             .catch(()=>{
-                this.setState({message_barcode: 'Article ' + this.state.barcode +  ' non reconnu'})
+                this.setState({message_barcode: 'Article ' + inventory_row.Barcode +  ' non reconnu'})
                 this.setState({barcode: ''})
             })
         }
         else {
             if (this.state.withLocationVerification){
-                db.searchArea(this.state.location)
-                .then(()=>{ this.submit() })
-                .catch(()=>{ this.setState({message_location: 'Emplacement ' + this.state.location + ' non reconnu'}) })
+                db.searchArea(inventory_row.Location)
+                .then(()=>{ this.submit(inventory_row) })
+                .catch(()=>{ this.setState({message_location: 'Emplacement ' + inventory_row.Location + ' non reconnu'}) })
             }
-            else { this.submit() }
+            else { this.submit(inventory_row) }
         }
     }
 
@@ -90,10 +90,10 @@ class InventorierForm extends React.Component
         this.setState({quantity: '1'})
     }
 
-    submit() {
-        db.addDetailInventaire([this.state.inventory_token.id, this.state.location, this.state.barcode, Number(this.state.quantity), this.props.user_token.id])
+    submit(inventory_row) {
+        db.addDetailInventaire([this.state.inventory_token.id, inventory_row.Location, inventory_row.Barcode, Number(inventory_row.Quantity), this.props.user_token.id])
             .then(() =>{
-                this.setState({message: 'Article ' + this.state.barcode+' Enregistré'})
+                this.setState({message: 'Article ' + inventory_row.Barcode +' Enregistré'})
                 this._reset_form_values()
             })
     }
@@ -136,7 +136,8 @@ class InventorierForm extends React.Component
                         placeholder= "Code à barre"
                         onSubmitEditing={() => {
                             if (this.state.withQuantity){ this.thirdTextInput.focus() }
-                            else { if (this.state.location !== "" && this.state.barcode !== "") {this._verify_exists()} } }}
+                            else { if (this.state.isFormValid) {
+                                this._verify_exists({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})} } }}
                         />
                         <Text style={styles.error_message}>{this.state.message_barcode}</Text>
                         {this.state.withQuantity &&
@@ -151,8 +152,8 @@ class InventorierForm extends React.Component
                                 placeholder= "Quantité"
                                 blurOnSubmit={false}
                                 onSubmitEditing={() => {
-                                    if (this.state.location !== "" && this.state.barcode !== "" && this.state.quantity >0) {
-                                        this._verify_exists()
+                                    if (this.state.isFormValid) {
+                                        this._verify_exists({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})
                                         this.secondTextInput.focus()
                                     }
                                 }}
@@ -164,8 +165,9 @@ class InventorierForm extends React.Component
                         title='                                   submit                                   '
                         disabled={!this.state.isFormValid}
                         onPress={() => {
-                            this._verify_exists()
-                            this.secondTextInput.focus()}
+                            this._verify_exists({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})
+                            this.secondTextInput.focus()
+                        }
                                 }
                         autoFocus={true}/>
                 </View>

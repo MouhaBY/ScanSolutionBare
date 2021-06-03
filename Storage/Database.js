@@ -50,7 +50,7 @@ export default class Database {
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
-                tx.executeSql( 'INSERT INTO Products (code, name) VALUES ("1", "Article 1"), ("2","Article 2")', [],
+                tx.executeSql( 'INSERT INTO Products (code, name) VALUES ("1", "Article 1"), ("2","Article 2"), ("6194007510014","SABRINE 1.5L") ', [],
                 (tx, results) => {
                     resolve(results) 
                     console.log('products inserted')
@@ -187,7 +187,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                    'INSERT INTO Users (username, password, contact, isAdmin) VALUES ("123","123","MBY", 1), ("Test","test","MBY Test", 0)', [],
+                    'INSERT INTO Users (username, password, contact, isAdmin) VALUES ("123","123","MBY", 1), ("Test","test","MBY Test", 0), ("1","1","MBY 1", 0)', [],
                 (tx, results) => { 
                     resolve(results) 
                     console.log('users inserted')

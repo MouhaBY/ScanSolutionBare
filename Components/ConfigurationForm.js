@@ -29,8 +29,9 @@ export default class ConfigurationForm extends React.Component
 
     submitConfig(){
         db.updateConfiguration([this.cast_from_bool(this.state.withBarcodeVerification),"withBarcodeVerification"])
-        db.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"withLocationVerification"])
-        db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+        .then(()=>{ db.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"withLocationVerification"])})
+        .then(()=>{ db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])})
+        .then(()=>{ this.props.navigation.goBack()})
     }
 
     render(){

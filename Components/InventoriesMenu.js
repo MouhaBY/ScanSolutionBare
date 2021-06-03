@@ -60,6 +60,7 @@ class Inventories extends React.Component
                     <View style={{flexDirection:'row'}}>
                         <TextInput 
                         style={{margin:1, flex:1}} 
+                        autoFocus={true}
                         placeholder="Nouveau inventaire"
                         value={this.state.inventaire_to_add} 
                         onChangeText={(inventaire_to_add) => this.setState({ inventaire_to_add })} />
