@@ -24,11 +24,11 @@ export default class Areas extends React.Component {
     }
 
     _renderItem = ({item}) => (
-        <TouchableOpacity 
+        <View 
         style={styles.table_row}>
             <Text style={[styles.table_row_txt, {width: "50%"}]}>{item.code}</Text>
             <Text style={[styles.table_row_txt, {width: "50%"}]}>{item.name}</Text>
-        </TouchableOpacity>
+        </View>
     )
 
     render(){
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     },
     table_row_txt:{
         padding:5, 
-        height:35,
+        height:38,
         textAlign:"center",
         fontSize:14, 
         backgroundColor:'#eff6fc',

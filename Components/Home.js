@@ -40,9 +40,9 @@ class Home extends React.Component
                         <Text style={styles.textButtonContainer}>Configuration</Text>
                     </TouchableOpacity>
                     }
-                    <View style={{flexDirection:'row',}}>
+                    <View style={styles.viewMiniButtonContainer}>
                         <TouchableOpacity 
-                        style={styles.miniButtonContainer}
+                        style={[styles.miniButtonContainer, {marginRight:"2%"}]}
                         onPress={() => {this.accessMenu("Articles")}}>
                             <Text style={styles.textButtonContainer}>Articles</Text>
                         </TouchableOpacity>
@@ -72,12 +72,15 @@ const styles = StyleSheet.create({
         marginTop: 20,
         borderRadius: 5 
     },
+    viewMiniButtonContainer:{
+        flexDirection:'row', 
+        marginTop: 20, 
+        marginHorizontal:20, 
+    },
     miniButtonContainer:{
         justifyContent:'center', 
-        marginLeft:20, 
-        width:"40%", 
+        width:"49%", 
         height: 50, 
-        marginTop: 20, 
         borderRadius: 5,
         backgroundColor:'#004578'
     },
