@@ -10,7 +10,7 @@ export default class SyncButton extends React.Component {
     constructor(props){
         super(props)
     }
-
+    
     render(){
         return(
             <TouchableOpacity 
@@ -21,4 +21,3 @@ export default class SyncButton extends React.Component {
         )
     }
 }
-

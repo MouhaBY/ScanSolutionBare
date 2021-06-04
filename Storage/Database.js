@@ -1,4 +1,5 @@
-import { openDatabase, } from 'react-native-sqlite-storage'
+import { Alert } from 'react-native'
+import { openDatabase, SQLite } from 'react-native-sqlite-storage'
 
 
 export default class Database {
@@ -10,7 +11,8 @@ export default class Database {
         return(db)
     }
 
-    synchroniser(){ }
+    synchroniser(){ 
+    }
 
     createDatabase(){
         const  db = this.initDB()
@@ -30,7 +32,7 @@ export default class Database {
         })
     }
 
-    /****************************** Products Handling ******************************/
+    /****************************************** Products Handling ******************************************/
 
     createTableProducts(){
         const  db = this.initDB()
@@ -97,7 +99,7 @@ export default class Database {
         })
     }
 
-    /******************************Areas Handling ******************************/
+    /****************************************** Areas Handling ******************************************/
 
     createTableAreas(){
         const  db = this.initDB()
@@ -166,7 +168,7 @@ export default class Database {
         })
     }
 
-    /****************************** Users Handling ******************************/
+    /****************************************** Users Handling ******************************************/
 
     createTableUsers(){
         const  db = this.initDB()
@@ -210,7 +212,7 @@ export default class Database {
         })
     }
 
-    /****************************** Configuration Handling ******************************/
+    /****************************************** Configuration Handling ******************************************/
 
     createTableConfiguration(){
         const  db = this.initDB()
@@ -270,7 +272,7 @@ export default class Database {
         })
     }
 
-    /****************************** Inventories Handling ******************************/
+    /****************************************** Inventories Handling ******************************************/
 
     createTableInventaires(){
         const  db = this.initDB()

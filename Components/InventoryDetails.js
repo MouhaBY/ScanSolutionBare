@@ -15,6 +15,7 @@ export default class InventoryDetails extends React.Component {
     }
 
     get_inventory_details = (id_inv) => {
+        this.setState({inventorylist:[]})
         db.getDetailsInventaires(id_inv)
         .then((data) => { this.setState({inventorylist:data}) })
         .catch(()=>{ console.log('catch') })
