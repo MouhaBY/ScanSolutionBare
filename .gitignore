@@ -78,4 +78,6 @@ buck-out/
 .flowconfig
 .prettierrc.js
 .watchmanconfig
+babel.config.js
+metro.config.js
 
