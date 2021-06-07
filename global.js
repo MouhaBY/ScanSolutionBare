@@ -10,3 +10,10 @@ global.withBarcodeVerification = false
 
 global.withQuantity = false
 */
+
+/*
+global.tables = 
+
+global.products = 
+
+global.areas = */

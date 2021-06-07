@@ -11,8 +11,14 @@ export default class Database {
         return(db)
     }
 
-    synchroniser(){ 
-    }
+    synchroniser = (table_to_sync, data_to_sync) => {
+        switch (table_to_sync){
+            case 'Products': this.DeleteTableProducts().then(()=>{ this.insertIntoProducts(data_to_sync) }).catch(()=>{ });break;
+            case 'Areas': this.DeleteTableAreas().then(()=>{ this.insertIntoAreas(data_to_sync) }).catch(()=>{ });break;
+            case 'Configuration': this.DeleteTableConfiguration().then(()=>{ this.insertIntoConfigurations(data_to_sync) }).catch(()=>{ });break;
+            default: break;
+            }
+        }
 
     createDatabase(){
         const  db = this.initDB()
@@ -47,6 +53,20 @@ export default class Database {
             })
         })
     }
+    
+    DeleteTableProducts(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'DELETE FROM Products', [], 
+                (tx, results) => {
+                    resolve(results)
+                    console.log('table products deleted')
+                })
+            })
+        })
+    }
 
     insertDefaultProducts(){
         const  db = this.initDB()
@@ -58,6 +78,20 @@ export default class Database {
                     console.log('products inserted')
                 })
             })
+        })
+    }
+    insertIntoConfigurations
+    insertIntoProducts(data_to_insert){
+        console.log('insert products')
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            var len = data_to_insert.length;
+            for (let i = 0; i < len; i++) {
+                db.transaction((tx) => {
+                    tx.executeSql('INSERT INTO Products (code, name) VALUES (?, ?)', [data_to_insert[i].code, data_to_insert[i].name],)
+                })
+            }
+            resolve(console.log('products inserted'))
         })
     }
 
@@ -115,6 +149,20 @@ export default class Database {
         })
     }
 
+    DeleteTableAreas(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'DELETE FROM Areas', [], 
+                (tx, results) => {
+                    resolve(results)
+                    console.log('table areas deleted')
+                })
+            })
+        })
+    }
+
     insertDefaultAreas(){
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
@@ -126,6 +174,20 @@ export default class Database {
                     console.log('Areas inserted')
                 })
             })
+        })
+    }
+
+    insertIntoAreas(data_to_insert){
+        console.log('insert areas')
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            var len = data_to_insert.length;
+            for (let i = 0; i < len; i++) {
+                db.transaction((tx) => {
+                    tx.executeSql('INSERT INTO Areas (code, name) VALUES (?, ?)', [data_to_insert[i].code, data_to_insert[i].name],)
+                })
+            }
+            resolve(console.log('Areas inserted'))
         })
     }
 
@@ -228,6 +290,20 @@ export default class Database {
         })
     }
 
+    DeleteTableConfiguration(){
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                'DELETE FROM Configuration', [], 
+                (tx, results) => {
+                    resolve(results)
+                    console.log('table Configuration deleted')
+                })
+            })
+        })
+    }
+
     insertDefaultConfiguration(){
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
@@ -239,6 +315,20 @@ export default class Database {
                     console.log('configuration inserted')
                 })
             })
+        })
+    }
+
+    insertIntoConfigurations(data_to_insert){
+        console.log('insert Configuration')
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            var len = data_to_insert.length;
+            for (let i = 0; i < len; i++) {
+                db.transaction((tx) => {
+                    tx.executeSql('INSERT INTO Configuration (key, state) VALUES (?, ?)', [data_to_insert[i].key, data_to_insert[i].state],)
+                })
+            }
+            resolve(console.log('products inserted'))
         })
     }
 
