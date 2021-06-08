@@ -91,7 +91,7 @@ class InventorierForm extends React.Component
     }
 
     submit(inventory_row) {
-        db.addDetailInventaire([this.state.inventory_token.id, inventory_row.Location, inventory_row.Barcode, Number(inventory_row.Quantity), this.props.user_token.id])
+        db.addDetailInventaire({ inventory_id: this.state.inventory_token.id, location: inventory_row.Location, barcode: inventory_row.Barcode, quantity: Number(inventory_row.Quantity), user_id: this.props.user_token.id })
             .then(() =>{
                 this.setState({message: 'Article ' + inventory_row.Barcode +' Enregistré'})
                 this._reset_form_values()

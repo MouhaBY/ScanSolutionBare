@@ -35,7 +35,7 @@ class Home extends React.Component
                     </TouchableOpacity>
                     {this.props.user_token.isAdmin == 1 &&
                     <TouchableOpacity 
-                    style={[styles.buttonContainer, {backgroundColor:'#c7e0f4'}]}
+                    style={[styles.buttonContainer, {backgroundColor:'#bdbdbd'}]}
                     onPress={() => {this.accessMenu("Configuration")}}>
                         <Text style={styles.textButtonContainer}>Configuration</Text>
                     </TouchableOpacity>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         marginHorizontal:20, 
         height: 50,
         marginTop: 20,
-        borderRadius: 5 
+        borderRadius: 5,
     },
     viewMiniButtonContainer:{
         flexDirection:'row', 
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         width:"49%", 
         height: 50, 
         borderRadius: 5,
-        backgroundColor:'#004578'
+        backgroundColor:'#004578',
     },
     textButtonContainer:{
         textAlign: 'center',

@@ -1,5 +1,5 @@
 import React from 'react'
-import { TouchableOpacity, Text, Alert } from 'react-native'
+import { TouchableOpacity, Text, Alert, StyleSheet } from 'react-native'
 import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers } from '../WS/API'
 import Database from '../Storage/Database'
 
@@ -12,13 +12,10 @@ export default class SyncButton extends React.Component {
         super(props)
     }
 
-    SyncingAlgorithm = () => { 
-        return new Promise((resolve, reject) => {
-        getWhatToSync()
-        .then(data=>{ this.SyncTables(data.results) })
-        .then(()=>{ resolve(' Synchro terminée ') })
-        .catch(()=>{ reject('erreur synchro') })
-        })
+    SyncingAlgorithm = () => {
+        getWhatToSync().then(data=>{ this.SyncTables(data.results) })
+        .then(()=>{ Alert.alert('Synchronisation', 'Synchronisation terminée') })
+        .catch(()=>{ Alert.alert('Erreur Synchronisation', 'Synchronisation echouée') })
     }
 
     SyncTables = (results) => {
@@ -52,12 +49,24 @@ export default class SyncButton extends React.Component {
     render(){
         return(
             <TouchableOpacity 
-            style={{backgroundColor:'#D0312D', justifyContent:'center', height:"60%", marginRight:5}} 
-            onPress={()=>{ this.SyncingAlgorithm().then(()=>{ Alert.alert('Synchronisation', 'Synchronisation terminée') })
-            .catch(()=>{ Alert.alert('Erreur Synchronisation', 'Synchronisation echouée') })
-            }}>
-                <Text style={{fontSize:12, margin: 3, color:'white'}}>Synchroniser</Text>
+            style={styles.touchableButton} 
+            onPress={()=>{ this.SyncingAlgorithm() }}>
+                <Text style={styles.textButton}>Synchroniser</Text>
             </TouchableOpacity>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    touchableButton:{
+        backgroundColor:'#D0312D', 
+        justifyContent:'center', 
+        height:"60%", 
+        marginRight:5
+    },
+    textButton:{
+        fontSize:12, 
+        margin: 3, 
+        color:'white'
+    },
+})

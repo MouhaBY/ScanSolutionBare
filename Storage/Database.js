@@ -355,7 +355,7 @@ export default class Database {
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
-                tx.executeSql( 'INSERT INTO Inventaires (name, date) VALUES (?, ?)', inventaire,
+                tx.executeSql( 'INSERT INTO Inventaires (name, date) VALUES (?, ?)', [inventaire.name, inventaire.date],
                 (tx, results) => { resolve(results) })
             })
         })
@@ -429,7 +429,8 @@ export default class Database {
         const  db = this.initDB()
         return new Promise((resolve) => {
             db.transaction((tx) => {
-                tx.executeSql('INSERT INTO Details (inventory_id, location, barcode, quantity, user_id) VALUES (?, ?, ?, ?, ?)', item,
+                tx.executeSql('INSERT INTO Details (inventory_id, location, barcode, quantity, user_id) VALUES (?, ?, ?, ?, ?)', 
+                [item.inventory_id, item.location, item.barcode, item.quantity, item.user_id],
                 (tx, results) => { resolve(results) })
             })
         })

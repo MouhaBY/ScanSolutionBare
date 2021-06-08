@@ -45,6 +45,16 @@ class Inventories extends React.Component
 
     _reset_form_values(){
         this.setState({inventaire_to_add: ''})
+        this.setState({inventaires:[]})
+    }
+
+    submitInventaire = ()=>{
+        let today = new Date()
+        let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
+        this.setState({ toAdd: !this.state.toAdd })
+        db.insertInventaire({ name: this.state.inventaire_to_add, date: completeDate })
+        this._reset_form_values()
+        this.componentDidMount()
     }
     
     render(){
@@ -67,14 +77,7 @@ class Inventories extends React.Component
                         <Button 
                         title='Add'
                         disabled={!this.state.isFormValid}
-                        onPress={() => {
-                            let today = new Date()
-                            let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
-                            this.setState({ toAdd: !this.state.toAdd })
-                            db.insertInventaire([this.state.inventaire_to_add,completeDate])
-                            this._reset_form_values()
-                            this.componentDidMount()
-                        }}/>
+                        onPress={() => { this.submitInventaire() }}/>
                     </View>
                     }
                 </View>
