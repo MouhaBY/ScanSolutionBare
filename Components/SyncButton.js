@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity, Text, Alert } from 'react-native'
-import { getWhatToSync, getProducts, getLocations, getConfiguration } from '../WS/API'
+import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers } from '../WS/API'
 import Database from '../Storage/Database'
 
 
@@ -43,6 +43,7 @@ export default class SyncButton extends React.Component {
                 case 'Products': getProducts().then(data =>{ resolve(data.results) }); break;
                 case 'Areas': getLocations().then(data =>{ resolve(data.results) }); break;
                 case 'Configuration': getConfiguration().then(data =>{ resolve(data.results) }); break;
+                case 'Users': getUsers().then(data =>{ resolve(data.results) }); break;
                 default: resolve([]); break;
             }
         })

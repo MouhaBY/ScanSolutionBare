@@ -1,4 +1,3 @@
-import { Alert } from 'react-native'
 import { openDatabase, SQLite } from 'react-native-sqlite-storage'
 
 
@@ -13,27 +12,24 @@ export default class Database {
 
     synchroniser = (table_to_sync, data_to_sync) => {
         switch (table_to_sync){
-            case 'Products': this.DeleteTableProducts().then(()=>{ this.insertIntoProducts(data_to_sync) }).catch(()=>{ });break;
-            case 'Areas': this.DeleteTableAreas().then(()=>{ this.insertIntoAreas(data_to_sync) }).catch(()=>{ });break;
-            case 'Configuration': this.DeleteTableConfiguration().then(()=>{ this.insertIntoConfigurations(data_to_sync) }).catch(()=>{ });break;
+            case 'Products': this.DeleteTableProducts().then(()=>{ this.insertIntoProducts(data_to_sync) }).catch(()=>{ }); break;
+            case 'Areas': this.DeleteTableAreas().then(()=>{ this.insertIntoAreas(data_to_sync) }).catch(()=>{ }); break;
+            case 'Configuration': this.DeleteTableConfigurations().then(()=>{ this.insertIntoConfigurations(data_to_sync) }).catch(()=>{ }); break;
+            case 'Users': this.DeleteTableUsers().then(()=>{ this.insertIntoUsers(data_to_sync) }).catch(()=>{ }); break;
             default: break;
-            }
         }
+    }
 
     createDatabase(){
         const  db = this.initDB()
         db.executeSql('SELECT 1 FROM Users LIMIT 1', [], ()=>{ console.log('database exists') }, () => {
             console.log('creating database')
             this.createTableUsers()
-            .then(()=>{ this.insertDefaultUsers() })
             .then(()=>{ this.createTableConfiguration() })
-            .then(()=>{ this.insertDefaultConfiguration() })
             .then(()=>{ this.createTableInventaires() })
             .then(()=>{ this.createTableDetails() })
             .then(()=>{ this.createTableProducts() })
-            .then(()=>{ this.insertDefaultProducts() })
             .then(()=>{ this.createTableAreas() })
-            .then(()=>{ this.insertDefaultAreas() })
             .then(()=>{ console.log('database created') })
         })
     }
@@ -45,7 +41,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS Products (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
+                'CREATE TABLE IF NOT EXISTS Products (id INTEGER UNIQUE PRIMARY KEY, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
                 (tx, results) => {
                     resolve(results)
                     console.log('table products created')
@@ -53,7 +49,7 @@ export default class Database {
             })
         })
     }
-    
+
     DeleteTableProducts(){
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
@@ -68,19 +64,6 @@ export default class Database {
         })
     }
 
-    insertDefaultProducts(){
-        const  db = this.initDB()
-        return new Promise((resolve, reject) => {
-            db.transaction((tx) => {
-                tx.executeSql( 'INSERT INTO Products (code, name) VALUES ("1", "Article 1"), ("2","Article 2"), ("6194007510014","SABRINE 1.5L") ', [],
-                (tx, results) => {
-                    resolve(results) 
-                    console.log('products inserted')
-                })
-            })
-        })
-    }
-    insertIntoConfigurations
     insertIntoProducts(data_to_insert){
         console.log('insert products')
         const  db = this.initDB()
@@ -88,7 +71,8 @@ export default class Database {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
                 db.transaction((tx) => {
-                    tx.executeSql('INSERT INTO Products (code, name) VALUES (?, ?)', [data_to_insert[i].code, data_to_insert[i].name],)
+                    tx.executeSql('INSERT INTO Products (id, code, name) VALUES (?, ?, ?)', 
+                    [data_to_insert[i].id, data_to_insert[i].code, data_to_insert[i].name],)
                 })
             }
             resolve(console.log('products inserted'))
@@ -112,7 +96,7 @@ export default class Database {
                             code,
                             name
                           })
-                    }   
+                    }
                     resolve(products)              
                 })
             })
@@ -140,7 +124,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS Areas (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
+                'CREATE TABLE IF NOT EXISTS Areas (id INTEGER UNIQUE PRIMARY KEY, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
                 (tx, results) => { 
                     resolve(results)
                     console.log('table areas created')
@@ -163,20 +147,6 @@ export default class Database {
         })
     }
 
-    insertDefaultAreas(){
-        const  db = this.initDB()
-        return new Promise((resolve, reject) => {
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'INSERT INTO Areas (code, name) VALUES ("10", "Emp 1"), ("20","Emp 2")', [],
-                (tx, results) => { 
-                    resolve(results) 
-                    console.log('Areas inserted')
-                })
-            })
-        })
-    }
-
     insertIntoAreas(data_to_insert){
         console.log('insert areas')
         const  db = this.initDB()
@@ -184,7 +154,8 @@ export default class Database {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
                 db.transaction((tx) => {
-                    tx.executeSql('INSERT INTO Areas (code, name) VALUES (?, ?)', [data_to_insert[i].code, data_to_insert[i].name],)
+                    tx.executeSql('INSERT INTO Areas (id, code, name) VALUES (?, ?, ?)', 
+                    [data_to_insert[i].id, data_to_insert[i].code, data_to_insert[i].name],)
                 })
             }
             resolve(console.log('Areas inserted'))
@@ -237,7 +208,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS Users (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL UNIQUE, contact TEXT NOT NULL, isAdmin INTEGER NOT NULL DEFAULT 0)', [], 
+                'CREATE TABLE IF NOT EXISTS Users (id INTEGER UNIQUE PRIMARY KEY, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL UNIQUE, contact TEXT NOT NULL, isAdmin INTEGER NOT NULL DEFAULT 0)', [], 
                 (tx, results) => { 
                     resolve(results)
                     console.log('table users created')
@@ -246,17 +217,32 @@ export default class Database {
         })
     }
 
-    insertDefaultUsers(){
+    DeleteTableUsers(){
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                    'INSERT INTO Users (username, password, contact, isAdmin) VALUES ("123","123","MBY", 1), ("Test","test","MBY Test", 0), ("1","1","MBY 1", 0)', [],
-                (tx, results) => { 
-                    resolve(results) 
-                    console.log('users inserted')
+                'DELETE FROM Users', [], 
+                (tx, results) => {
+                    resolve(results)
+                    console.log('table Users deleted')
                 })
             })
+        })
+    }
+
+    insertIntoUsers(data_to_insert){
+        console.log('insert users')
+        const  db = this.initDB()
+        return new Promise((resolve, reject) => {
+            var len = data_to_insert.length;
+            for (let i = 0; i < len; i++) {
+                db.transaction((tx) => {
+                    tx.executeSql('INSERT INTO Users (id, username, password, contact, isAdmin) VALUES (?, ?, ?, ?, ?)', 
+                    [data_to_insert[i].id, data_to_insert[i].username, data_to_insert[i].password, data_to_insert[i].contact, data_to_insert[i].isAdmin],)
+                })
+            }
+            resolve(console.log('users inserted'))
         })
     }
 
@@ -290,7 +276,7 @@ export default class Database {
         })
     }
 
-    DeleteTableConfiguration(){
+    DeleteTableConfigurations(){
         const  db = this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
@@ -304,20 +290,6 @@ export default class Database {
         })
     }
 
-    insertDefaultConfiguration(){
-        const  db = this.initDB()
-        return new Promise((resolve, reject) => {
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'INSERT INTO Configuration (key, state) VALUES ("withLocationVerification", 1), ("withBarcodeVerification", 1), ("withQuantity", 0)', [],
-                (tx, results) => {
-                    resolve(results) 
-                    console.log('configuration inserted')
-                })
-            })
-        })
-    }
-
     insertIntoConfigurations(data_to_insert){
         console.log('insert Configuration')
         const  db = this.initDB()
@@ -325,10 +297,11 @@ export default class Database {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
                 db.transaction((tx) => {
-                    tx.executeSql('INSERT INTO Configuration (key, state) VALUES (?, ?)', [data_to_insert[i].key, data_to_insert[i].state],)
+                    tx.executeSql('INSERT INTO Configuration (key, state) VALUES (?, ?)', 
+                    [data_to_insert[i].key, data_to_insert[i].state],)
                 })
             }
-            resolve(console.log('products inserted'))
+            resolve(console.log('configuration inserted'))
         })
     }
 
