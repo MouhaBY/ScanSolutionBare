@@ -5,6 +5,7 @@ import Database from '../Storage/Database'
 
 const db = new Database()
 
+
 class InventoriesDetailsMenu extends React.Component 
 {
     constructor(props){
@@ -18,8 +19,9 @@ class InventoriesDetailsMenu extends React.Component
        this.props.navigation.navigate("Détails", {inventory_token:item})
       }
     
-    getInventoriesList = () => {
-        db.getInventaires().then((data) => {this.setState({inventaires:data}) })
+    getInventoriesList = async () => {
+        const inventaires = await db.getInventaires()
+        this.setState({inventaires})
     }
 
     componentDidMount(){

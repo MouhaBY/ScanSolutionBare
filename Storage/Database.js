@@ -5,53 +5,57 @@ export default class Database {
 
     /****************************** Data base creation, manipulation and config ******************************/
 
-    initDB() {
-        const db = openDatabase({name: 'data.db'})
+    async initDB(){
+        const db = await openDatabase({name: 'data.db'})
         return(db)
     }
 
-    synchroniser = (table_to_sync, data_to_sync) => {
-        switch (table_to_sync){
-            case 'Products': this.DeleteTableProducts().then(()=>{ this.insertIntoProducts(data_to_sync) }).catch(()=>{ }); break;
-            case 'Areas': this.DeleteTableAreas().then(()=>{ this.insertIntoAreas(data_to_sync) }).catch(()=>{ }); break;
-            case 'Configuration': this.DeleteTableConfigurations().then(()=>{ this.insertIntoConfigurations(data_to_sync) }).catch(()=>{ }); break;
-            case 'Users': this.DeleteTableUsers().then(()=>{ this.insertIntoUsers(data_to_sync) }).catch(()=>{ }); break;
-            default: break;
-        }
+    checkDatabase = async () =>{
+        const db = await this.initDB()
+        return new Promise((resolve, reject) => {
+            db.executeSql('SELECT 1 FROM Users LIMIT 1', [], 
+            () => { console.log('Database exists'); resolve(true) }, 
+            () => { console.log('Database not exists'); resolve(false) })
+        })
     }
 
-    createDatabase(){
-        const  db = this.initDB()
-        db.executeSql('SELECT 1 FROM Users LIMIT 1', [], ()=>{ console.log('database exists') }, () => {
-            console.log('creating database')
-            this.createTableUsers()
-            .then(()=>{ this.createTableConfiguration() })
-            .then(()=>{ this.createTableInventaires() })
-            .then(()=>{ this.createTableDetails() })
-            .then(()=>{ this.createTableProducts() })
-            .then(()=>{ this.createTableAreas() })
-            .then(()=>{ console.log('database created') })
-        })
+    createDatabase = async () => {
+        try{
+            const db = await this.initDB()
+            const isCreated = await this.checkDatabase()
+            if (!isCreated){
+                console.log('Creating Database')
+                await this.createTableUsers()
+                await this.createTableConfiguration()
+                await this.createTableInventaires()
+                await this.createTableDetails()
+                await this.createTableProducts()
+                await this.createTableAreas()
+                console.log('Database created')
+            }
+            return(true)
+        }
+        catch(err){ console.log('Problem creating Database') }
     }
 
     /****************************************** Products Handling ******************************************/
 
-    createTableProducts(){
-        const  db = this.initDB()
+    async createTableProducts(){
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
                 'CREATE TABLE IF NOT EXISTS Products (id INTEGER UNIQUE PRIMARY KEY, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
                 (tx, results) => {
                     resolve(results)
-                    console.log('table products created')
+                    console.log('Table Products created')
                 })
             })
         })
     }
 
-    DeleteTableProducts(){
-        const  db = this.initDB()
+    async DeleteTableProducts(){
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -64,9 +68,9 @@ export default class Database {
         })
     }
 
-    insertIntoProducts(data_to_insert){
+    async insertIntoProducts(data_to_insert){
         console.log('insert products')
-        const  db = this.initDB()
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
@@ -79,8 +83,8 @@ export default class Database {
         })
     }
 
-    getProducts() {
-        const  db = this.initDB()
+    async getProducts() {
+        const  db = await this.initDB()
         return new Promise((resolve) => {
             const products = []
             db.transaction((tx) => {
@@ -103,15 +107,15 @@ export default class Database {
         })
     }
     
-    searchProduct(barcode) {
-        const  db = this.initDB()
+    async searchProduct(barcode) {
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql( 'SELECT * FROM Products WHERE code = ?', [barcode],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) { resolve(results.rows.item(0)) }
-                    else{ reject('article introuvable') }
+                    else{ reject('Product unknown') }
                 })
             })
         })
@@ -119,8 +123,8 @@ export default class Database {
 
     /****************************************** Areas Handling ******************************************/
 
-    createTableAreas(){
-        const  db = this.initDB()
+    async createTableAreas(){
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -133,8 +137,8 @@ export default class Database {
         })
     }
 
-    DeleteTableAreas(){
-        const  db = this.initDB()
+    async DeleteTableAreas(){
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -147,9 +151,9 @@ export default class Database {
         })
     }
 
-    insertIntoAreas(data_to_insert){
+    async insertIntoAreas(data_to_insert){
         console.log('insert areas')
-        const  db = this.initDB()
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
@@ -162,8 +166,8 @@ export default class Database {
         })
     }
 
-    getAreas() {
-        const  db = this.initDB()
+    async getAreas() {
+        const  db = await this.initDB()
         return new Promise((resolve) => {
             const areas = []
             db.transaction((tx) => {
@@ -186,8 +190,8 @@ export default class Database {
         })
     }
 
-    searchArea(location) {
-        const  db = this.initDB()
+    async searchArea(location) {
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -195,7 +199,7 @@ export default class Database {
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) { resolve(results.rows.item(0)) }
-                    else{ reject('emplacement introuvable') }
+                    else{ reject('Location unknown') }
                 })
             })
         })
@@ -203,8 +207,8 @@ export default class Database {
 
     /****************************************** Users Handling ******************************************/
 
-    createTableUsers(){
-        const  db = this.initDB()
+    async createTableUsers(){
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -217,8 +221,8 @@ export default class Database {
         })
     }
 
-    DeleteTableUsers(){
-        const  db = this.initDB()
+    async DeleteTableUsers(){
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -231,9 +235,9 @@ export default class Database {
         })
     }
 
-    insertIntoUsers(data_to_insert){
+    async insertIntoUsers(data_to_insert){
         console.log('insert users')
-        const  db = this.initDB()
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
@@ -246,15 +250,15 @@ export default class Database {
         })
     }
 
-    searchUser(username) {
-        const  db = this.initDB()
+    async searchUser(username) {
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql( 'SELECT * FROM Users WHERE username = ?', [username],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) { resolve(results.rows.item(0)) }
-                    else{ reject('utilisateur introuvable') }
+                    else{ reject({}) }
                 })
             })
         })
@@ -262,8 +266,8 @@ export default class Database {
 
     /****************************************** Configuration Handling ******************************************/
 
-    createTableConfiguration(){
-        const  db = this.initDB()
+    async createTableConfiguration(){
+        const db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -276,8 +280,8 @@ export default class Database {
         })
     }
 
-    DeleteTableConfigurations(){
-        const  db = this.initDB()
+    async DeleteTableConfigurations(){
+        const db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -290,9 +294,9 @@ export default class Database {
         })
     }
 
-    insertIntoConfigurations(data_to_insert){
+    async insertIntoConfigurations(data_to_insert){
         console.log('insert Configuration')
-        const  db = this.initDB()
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
@@ -305,15 +309,15 @@ export default class Database {
         })
     }
 
-    getConfiguration(configuration_key) {
-        const  db = this.initDB()
+    async getConfiguration(configuration_key) {
+        const  db = await this.initDB()
         return new Promise((resolve) => {
             db.transaction((tx) => {
                 tx.executeSql( 'SELECT state FROM Configuration WHERE key = ?', [configuration_key],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) { 
-                        resolve(results.rows.item(0)) 
+                        resolve(results.rows.item(0).state)
                         console.log('get configuration ' + configuration_key)
                     }
                     else{ reject('configuration introuvable') } 
@@ -322,8 +326,8 @@ export default class Database {
         })
     }
 
-    updateConfiguration(configuration_item){
-        const  db = this.initDB()
+    async updateConfiguration(configuration_item){
+        const db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql( 'UPDATE Configuration SET state = ? WHERE key = ? ', configuration_item,
@@ -337,8 +341,8 @@ export default class Database {
 
     /****************************************** Inventories Handling ******************************************/
 
-    createTableInventaires(){
-        const  db = this.initDB()
+    async createTableInventaires(){
+        const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -351,8 +355,8 @@ export default class Database {
         })
     }
 
-    insertInventaire(inventaire){
-        const  db = this.initDB()
+    async insertInventaire(inventaire){
+        const db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql( 'INSERT INTO Inventaires (name, date) VALUES (?, ?)', [inventaire.name, inventaire.date],
@@ -361,8 +365,8 @@ export default class Database {
         })
     }
 
-    createTableDetails(){
-        const  db = this.initDB()
+    async createTableDetails(){
+        const db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
@@ -375,8 +379,8 @@ export default class Database {
         })
     }
 
-    getInventaires() {
-        const  db = this.initDB()
+    async getInventaires() {
+        const  db = await this.initDB()
         return new Promise((resolve) => {
             const inventaires = []
             db.transaction((tx) => {
@@ -398,8 +402,8 @@ export default class Database {
         })
     }
 
-    getDetailsInventaires(id_inventaire) {
-        const  db = this.initDB()
+    async getDetailsInventaires(id_inventaire) {
+        const  db = await this.initDB()
         return new Promise((resolve) => {
             const details = []
             db.transaction((tx) => {
@@ -425,8 +429,8 @@ export default class Database {
         })
     }
 
-    addDetailInventaire(item) {
-        const  db = this.initDB()
+    async addDetailInventaire(item) {
+        const db = await this.initDB()
         return new Promise((resolve) => {
             db.transaction((tx) => {
                 tx.executeSql('INSERT INTO Details (inventory_id, location, barcode, quantity, user_id) VALUES (?, ?, ?, ?, ?)', 
@@ -436,8 +440,8 @@ export default class Database {
         })
     }
 
-    deleteDetailInventaire(item_id){
-        const  db = this.initDB()
+    async deleteDetailInventaire(item_id){
+        const db = await this.initDB()
         return new Promise((resolve) => { db.transaction((tx) => { tx.executeSql('DELETE FROM Details WHERE id = ?', [item_id], 
             ([tx, results]) => { resolve(results) }) })
         })

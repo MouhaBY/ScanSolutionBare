@@ -13,10 +13,14 @@ export default class Areas extends React.Component {
         }
     }
 
-    get_Areas = () => {
-        db.getAreas()
-        .then((data) => { this.setState({Areaslist:data}) })
-        .catch(()=>{ console.log('catch') })
+    get_Areas = async () => {
+        let Areaslist = await db.getAreas()
+        try{
+            this.setState({Areaslist})
+        }
+        catch(err){ 
+            console.log('catch') 
+        }
     }
 
     componentDidMount(){

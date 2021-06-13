@@ -21,17 +21,29 @@ export default class ConfigurationForm extends React.Component
 
     cast_from_bool(bool_state){ if (bool_state == true){ return 1 } else { return 0} }
 
-    componentDidMount(){
-        db.getConfiguration("withLocationVerification").then((data) => { this.setState({withLocationVerification: this.cast_to_bool(data.state)}) })
-        db.getConfiguration("withBarcodeVerification").then((data) => { this.setState({withBarcodeVerification: this.cast_to_bool(data.state)}) })
-        db.getConfiguration("withQuantity").then((data) => { this.setState({withQuantity: this.cast_to_bool(data.state)}) })    
+    readConfiguration = async () => {
+        let withLocationVerificationState = await db.getConfiguration("withLocationVerification")
+        let withLocationVerification = this.cast_to_bool(withLocationVerificationState)
+        this.setState({withLocationVerification})
+
+        let withBarcodeVerificationState = await db.getConfiguration("withBarcodeVerification")
+        let withBarcodeVerification = this.cast_to_bool(withBarcodeVerificationState)
+        this.setState({withBarcodeVerification})
+
+        let withQuantityState = await db.getConfiguration("withQuantity")
+        let withQuantity = this.cast_to_bool(withQuantityState)
+        this.setState({withQuantity})
     }
 
-    submitConfig(){
-        db.updateConfiguration([this.cast_from_bool(this.state.withBarcodeVerification),"withBarcodeVerification"])
-        .then(()=>{ db.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"withLocationVerification"])})
-        .then(()=>{ db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])})
-        .then(()=>{ this.props.navigation.goBack()})
+    componentDidMount(){
+        this.readConfiguration()
+    }
+
+    submitConfig = async () => {
+        await db.updateConfiguration([this.cast_from_bool(this.state.withBarcodeVerification),"withBarcodeVerification"])
+        await db.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"withLocationVerification"])
+        await db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+        this.props.navigation.goBack()
     }
 
     render(){

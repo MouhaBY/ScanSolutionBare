@@ -18,7 +18,7 @@ import Areas from '../Components/Areas'
 
 const Stack = createStackNavigator()
 
-const SearchNavigation = () => {    
+const AppNavigation = () => {    
     const state = store.getState()
     const authenticated = state.authenticated
 
@@ -55,4 +55,4 @@ const mapStateToProps = state => {
     }
   }
   
-  export default connect(mapStateToProps)(SearchNavigation)
+  export default connect(mapStateToProps)(AppNavigation)

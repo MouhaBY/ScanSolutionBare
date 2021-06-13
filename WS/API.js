@@ -1,9 +1,9 @@
 const API_TOKEN = "f78171b682bc4c08986c8067a8113ce6"
 
 
-export function getWhatToSync(){
+export async function getWhatToSync(){
     return new Promise((resolve, reject) => { 
-        resolve( { results: ['Products', 'Areas', 'Configuration', 'Users'] } ) 
+        resolve( { results: ['Products', 'Areas', 'Configuration', 'Users'] } )
     })
 }
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, View, StyleSheet, TextInput, Button, TouchableOpacity, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import CheckBox from '@react-native-community/checkbox'
-import { color } from 'react-native-reanimated'
 import { connect } from 'react-redux'
 import Database from '../Storage/Database'
 
@@ -29,9 +28,13 @@ class InventorierForm extends React.Component
         }
     }
 
+    submitConfiguration = async () => {
+        await db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (this.state.withQuantity !== prevState.withQuantity){
-            db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+            this.submitConfiguration()
         }
         if (this.state.location !== prevState.location || this.state.barcode !== prevState.barcode || this.state.quantity !== prevState.quantity){
             if(this.state.location !== '' && this.state.barcode !== '') {
@@ -44,58 +47,69 @@ class InventorierForm extends React.Component
     }
 
     validateForm = () => {
-        if (this.state.location !== "" && this.state.barcode !== "" && this.state.quantity > 0) { this.setState({isFormValid: true}) }
+        if (this.state.location !== "" && this.state.barcode !== "" && this.state.quantity > 0) { 
+            this.setState({isFormValid: true}) }
         else { this.setState({isFormValid: false}) }
     }
 
     cast_from_bool(bool_state){ if (bool_state == true){ return 1 } else { return 0} }
-
     cast_to_bool(data_state){ if (data_state > 0) { return true } else { return false } }
 
-    componentDidMount(){
-        const inventory_token_const = this.props.route.params.inventory_token
-        this.setState({inventory_token: inventory_token_const})
-        db.getConfiguration("withQuantity").then((data) => { this.setState({withQuantity: this.cast_to_bool(data.state)}) })
-        db.getConfiguration("withLocationVerification").then((data) => { this.setState({withLocationVerification: this.cast_to_bool(data.state)}) })
-        db.getConfiguration("withBarcodeVerification").then((data) => { this.setState({withBarcodeVerification: this.cast_to_bool(data.state)}) })
+    readConfiguration = async () => {
+        let withLocationVerificationState = await db.getConfiguration("withLocationVerification")
+        let withLocationVerification = this.cast_to_bool(withLocationVerificationState)
+        this.setState({withLocationVerification})
+
+        let withBarcodeVerificationState = await db.getConfiguration("withBarcodeVerification")
+        let withBarcodeVerification = this.cast_to_bool(withBarcodeVerificationState)
+        this.setState({withBarcodeVerification})
+
+        let withQuantityState = await db.getConfiguration("withQuantity")
+        let withQuantity = this.cast_to_bool(withQuantityState)
+        this.setState({withQuantity})
     }
 
-    _verify_exists(inventory_row){
-        if (this.state.withBarcodeVerification){
-            db.searchProduct(inventory_row.Barcode)
-            .then(()=>{ 
-                if (this.state.withLocationVerification){
-                    db.searchArea(inventory_row.Location)
-                    .then(()=>{ this.submit(inventory_row) })
-                    .catch(()=>{ this.setState({message_location: 'Emplacement ' + inventory_row.Location + ' non reconnu'}) })
-                }
-                else { this.submit(inventory_row) }})
-            .catch(()=>{
+    componentDidMount(){
+        const inventory_token = this.props.route.params.inventory_token
+        this.setState({inventory_token})
+        this.readConfiguration()
+    }
+
+    verify_to_submit = async (inventory_row) => {
+        try{
+            if (this.state.withLocationVerification){
+                await db.searchArea(inventory_row.Location)
+            }
+            if (this.state.withBarcodeVerification){
+                await db.searchProduct(inventory_row.Barcode)
+            }
+            this.submit(inventory_row)
+        }
+        catch(err){
+            if (err == 'Product unknown' ){
                 this.setState({message_barcode: 'Article ' + inventory_row.Barcode +  ' non reconnu'})
                 this.setState({barcode: ''})
-            })
-        }
-        else {
-            if (this.state.withLocationVerification){
-                db.searchArea(inventory_row.Location)
-                .then(()=>{ this.submit(inventory_row) })
-                .catch(()=>{ this.setState({message_location: 'Emplacement ' + inventory_row.Location + ' non reconnu'}) })
             }
-            else { this.submit(inventory_row) }
+            if (err == 'Location unknown' ){
+                this.setState({message_location: 'Emplacement ' + inventory_row.Location + ' non reconnu'})
+            }
         }
     }
 
-    _reset_form_values(){
+    submit = async (inventory_row) => {
+        await db.addDetailInventaire({ 
+            inventory_id: this.state.inventory_token.id, 
+            location: inventory_row.Location, 
+            barcode: inventory_row.Barcode, 
+            quantity: Number(inventory_row.Quantity), 
+            user_id: this.props.user_token.id })
+        this.setState({message: 'Article ' + inventory_row.Barcode +' Enregistré'})
+        this.reset_form_values()
+    }
+
+    reset_form_values(){
         this.setState({barcode: ''})
         this.setState({quantity: '1'})
-    }
-
-    submit(inventory_row) {
-        db.addDetailInventaire({ inventory_id: this.state.inventory_token.id, location: inventory_row.Location, barcode: inventory_row.Barcode, quantity: Number(inventory_row.Quantity), user_id: this.props.user_token.id })
-            .then(() =>{
-                this.setState({message: 'Article ' + inventory_row.Barcode +' Enregistré'})
-                this._reset_form_values()
-            })
     }
 
     accessInventoryDetails = (item) => { this.props.navigation.navigate("Détails", {inventory_token:item}) }
@@ -137,7 +151,7 @@ class InventorierForm extends React.Component
                         onSubmitEditing={() => {
                             if (this.state.withQuantity){ this.thirdTextInput.focus() }
                             else { if (this.state.isFormValid) {
-                                this._verify_exists({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})} } }}
+                                this.verify_to_submit({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})} } }}
                         />
                         <Text style={styles.error_message}>{this.state.message_barcode}</Text>
                         {this.state.withQuantity &&
@@ -153,7 +167,7 @@ class InventorierForm extends React.Component
                                 blurOnSubmit={false}
                                 onSubmitEditing={() => {
                                     if (this.state.isFormValid) {
-                                        this._verify_exists({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})
+                                        this.verify_to_submit({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})
                                         this.secondTextInput.focus()
                                     }
                                 }}
@@ -165,7 +179,7 @@ class InventorierForm extends React.Component
                         title='                                   submit                                   '
                         disabled={!this.state.isFormValid}
                         onPress={() => {
-                            this._verify_exists({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})
+                            this.verify_to_submit({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})
                             this.secondTextInput.focus()
                         }
                                 }

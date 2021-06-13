@@ -18,8 +18,9 @@ class Inventories extends React.Component
         }
     }
 
-    getInventoriesList = () => {
-        db.getInventaires().then((data) => { this.setState({inventaires:data}) })
+    getInventoriesList = async () => {
+        const inventaires = await db.getInventaires()
+        this.setState({inventaires})
     }
 
     componentDidMount(){
@@ -48,13 +49,17 @@ class Inventories extends React.Component
         this.setState({inventaires:[]})
     }
 
-    submitInventaire = ()=>{
+    submit_inventaire = async ()=>{
         let today = new Date()
         let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
         this.setState({ toAdd: !this.state.toAdd })
-        db.insertInventaire({ name: this.state.inventaire_to_add, date: completeDate })
+        await db.insertInventaire({ name: this.state.inventaire_to_add, date: completeDate })
         this._reset_form_values()
         this.componentDidMount()
+    }
+
+    handleInventaireUpdate = inventaire_to_add => {
+        this.setState({inventaire_to_add})
     }
     
     render(){
@@ -73,11 +78,11 @@ class Inventories extends React.Component
                         autoFocus={true}
                         placeholder="Nouveau inventaire"
                         value={this.state.inventaire_to_add} 
-                        onChangeText={(inventaire_to_add) => this.setState({ inventaire_to_add })} />
+                        onChangeText={this.handleInventaireUpdate} />
                         <Button 
                         title='Add'
                         disabled={!this.state.isFormValid}
-                        onPress={() => { this.submitInventaire() }}/>
+                        onPress={() => { this.submit_inventaire() }}/>
                     </View>
                     }
                 </View>

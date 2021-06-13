@@ -6,31 +6,37 @@ import Database from '../Storage/Database'
 
 const db = new Database()
 
+
 export default class SyncButton extends React.Component {
 
     constructor(props){
         super(props)
     }
 
-    SyncingAlgorithm = () => {
-        getWhatToSync().then(data=>{ this.SyncTables(data.results) })
-        .then(()=>{ Alert.alert('Synchronisation', 'Synchronisation terminée') })
-        .catch(()=>{ Alert.alert('Erreur Synchronisation', 'Synchronisation echouée') })
+    SyncingAlgorithm = async () => {
+        try {
+            const data = await getWhatToSync()
+            const isSynced = await this.SyncTables(data.results)
+            if (isSynced) { Alert.alert('Synchronisation', 'Synchronisation terminée') }
+            else { Alert.alert('Synchronisation', 'Terminal à jour') }
+        }
+        catch (err) { Alert.alert('Erreur Synchronisation', 'Synchronisation echouée') }
     }
 
-    SyncTables = (results) => {
-        return new Promise((resolve, reject) => {
+    SyncTables = async (results) => {
         let len = results.length
         if (len > 0){
             for (let i = 0; i < len; i++) {
                 let table_to_sync = results[i]
-                this.getDataToSync(table_to_sync).then(data =>{ if (data.length > 0){ db.synchroniser(table_to_sync, data) }
-                else { console.log(" data vierge ") }})
+                let data_to_sync = await this.getDataToSync(table_to_sync)
+                if (data_to_sync.length > 0){ 
+                    await this.synchroniser(table_to_sync, data_to_sync)
+                }
+                else { console.log(" data vierge ") }
             }
-            resolve(' Synchro terminée ')
+            return(true)
         }
-        else { resolve(console.log(' Rien à synchroniser ')) }
-        })
+        else { console.log(' Rien à synchroniser '); return(false) }
     }
     
     getDataToSync = (table_to_sync) => {
@@ -44,6 +50,38 @@ export default class SyncButton extends React.Component {
                 default: resolve([]); break;
             }
         })
+    }
+
+    synchroniser = async (table_to_sync, data_to_sync) => {
+        switch (table_to_sync){
+            case 'Products':
+                try{
+                    await db.DeleteTableProducts()
+                    await db.insertIntoProducts(data_to_sync)
+                    return(true)
+                } catch(err) { return (false) }                    
+            case 'Areas': 
+                try{
+                    await db.DeleteTableAreas()
+                    await db.insertIntoAreas(data_to_sync) 
+                    return(true)
+                } catch(err) { return (false) }
+            case 'Configuration': 
+                try{
+                    await db.DeleteTableConfigurations()
+                    await db.insertIntoConfigurations(data_to_sync)
+                    return(true)
+                } catch(err) { return (false) }
+            case 'Users': 
+                try{
+                    await db.DeleteTableUsers()
+                    await db.insertIntoUsers(data_to_sync)
+                    return(true)
+                } catch(err) { return (false) }
+            default: return(false);
+            /*let isDeleted = await
+            let isSynced = await */
+        }
     }
     
     render(){

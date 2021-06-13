@@ -5,6 +5,7 @@ import Database from '../Storage/Database'
 
 const db = new Database()
 
+
 export default class InventoryDetails extends React.Component {
     constructor(props){
         super(props)
@@ -14,26 +15,29 @@ export default class InventoryDetails extends React.Component {
         }
     }
 
-    get_inventory_details = (id_inv) => {
+    get_inventory_details = async (id_inv) => {
         this.setState({inventorylist:[]})
-        db.getDetailsInventaires(id_inv)
-        .then((data) => { this.setState({inventorylist:data}) })
-        .catch(()=>{ console.log('catch') })
+        try{
+            const inventorylist = await db.getDetailsInventaires(id_inv)
+            this.setState({inventorylist})
+        }catch(err){
+            console.log('catch getting inventaires')
+        }
     }
 
     componentDidMount(){
         const { navigation, route } = this.props;
-        const inventory_token_const = route.params.inventory_token
-        this.setState({inventory_token: inventory_token_const})
-        this.get_inventory_details(inventory_token_const.id)
+        const inventory_token = route.params.inventory_token
+        this.setState({inventory_token})
+        this.get_inventory_details(inventory_token.id)
     }
 
-    _deleteRow(item_to_delete) {
+    delete_Row = (item_to_delete) => {
         Alert.alert('Supprimer', 'Êtes vous sur de supprimer cette ligne ?', 
         [   { text: 'Annuler' },
             { text: 'Confirmer', 
-            onPress: () => {
-                db.deleteDetailInventaire(item_to_delete)
+            onPress: async () => {
+                await db.deleteDetailInventaire(item_to_delete)
                 this.get_inventory_details(this.state.inventory_token.id)
             }
             },
@@ -43,7 +47,7 @@ export default class InventoryDetails extends React.Component {
     _renderItem = ({item}) => (
         <TouchableOpacity 
         style={styles.table_row}
-        onLongPress={() => {this._deleteRow(item.id)}}>
+        onLongPress={() => { this.delete_Row(item.id) }}>
             <Text style={[styles.table_row_txt, {width: "40%"}]}>{item.location}</Text>
             <Text style={[styles.table_row_txt, {width: "40%"}]}>{item.barcode}</Text>
             <Text style={[styles.table_row_txt, {width: "20%"}]}>{item.quantity}</Text>

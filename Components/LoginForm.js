@@ -32,28 +32,25 @@ class LoginForm extends React.Component
             this.setState({isFormValid: false})
     }
 
-    _login = () => {
+    _login = async () => {
         if (this.state.username !== "" && this.state.password !== "") {
-            db.searchUser(this.state.username).then((data) => {
-                const user_found = data
-                if (user_found){
-                    if (this.state.password === user_found.password)
-                    {
-                        const action = { type: "LOGIN", value: user_found }
-                        this.props.dispatch(action)
-                    }
-                    else 
-                    { 
-                        Alert.alert('Accès interdit', 'Mot de passe erroné')
-                        const action = { type: "LOGOUT", value: false }
-                        this.props.dispatch(action)
-                    }}
-                }).catch(()=>
-                {
-                    Alert.alert('Accès interdit', 'Utilisateur introuvable')
+            try{
+                let user_found = await db.searchUser(this.state.username)
+                if (this.state.password === user_found.password) {
+                    const action = { type: "LOGIN", value: user_found }
+                    this.props.dispatch(action)
+                }
+                else { 
+                    Alert.alert('Accès interdit', 'Mot de passe erroné')
                     const action = { type: "LOGOUT", value: false }
                     this.props.dispatch(action)
-                })
+                }
+            }
+            catch(err) {
+                Alert.alert('Accès interdit', 'Utilisateur introuvable')
+                const action = { type: "LOGOUT", value: false }
+                this.props.dispatch(action)
+            }
         }
     }
 

@@ -13,10 +13,14 @@ export default class Products extends React.Component {
         }
     }
 
-    get_Products = () => {
-        db.getProducts()
-        .then((data) => { this.setState({Productslist:data}) })
-        .catch(()=>{ console.log('catch') })
+    get_Products = async () => {
+        let Productslist = await db.getProducts()
+        try{
+            this.setState({Productslist})
+        }
+        catch(err){ 
+            console.log('catch') 
+        }
     }
 
     componentDidMount(){
