@@ -79,8 +79,6 @@ export default class SyncButton extends React.Component {
                     return(true)
                 } catch(err) { return (false) }
             default: return(false);
-            /*let isDeleted = await
-            let isSynced = await */
         }
     }
     
