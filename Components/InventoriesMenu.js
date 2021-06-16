@@ -141,7 +141,6 @@ const styles = StyleSheet.create(
 
 const mapStateToProps = (state) => {
     return {
-        authenticated: state.authenticated,
         user_token: state.user_token,
     }
   }

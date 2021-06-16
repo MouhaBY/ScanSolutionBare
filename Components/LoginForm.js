@@ -1,10 +1,12 @@
 import React from 'react'
-import {View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback} from 'react-native'
+import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { connect } from 'react-redux'
 import Database from '../Storage/Database'
+import { LOGIN, LOGOUT } from '../Store/Reducers/authenticationReducer'
 
 
 const db = new Database()
+
 
 class LoginForm extends React.Component 
 {
@@ -14,7 +16,6 @@ class LoginForm extends React.Component
             username: '',
             password: '',
             isFormValid: false,
-            user_token: undefined
         }
     }
 
@@ -37,30 +38,26 @@ class LoginForm extends React.Component
             try{
                 let user_found = await db.searchUser(this.state.username)
                 if (this.state.password === user_found.password) {
-                    const action = { type: "LOGIN", value: user_found }
+                    const action = { type: LOGIN, value: user_found }
                     this.props.dispatch(action)
                 }
                 else { 
                     Alert.alert('Accès interdit', 'Mot de passe erroné')
-                    const action = { type: "LOGOUT", value: false }
+                    const action = { type: LOGOUT, value: false }
                     this.props.dispatch(action)
                 }
             }
             catch(err) {
                 Alert.alert('Accès interdit', 'Utilisateur introuvable')
-                const action = { type: "LOGOUT", value: false }
+                const action = { type: LOGOUT, value: false }
                 this.props.dispatch(action)
             }
         }
     }
 
-    handleUsernameUpdate = username => {
-        this.setState({username})
-    }
+    handleUsernameUpdate = username => { this.setState({username}) }
 
-    handlePasswordUpdate = password => {
-        this.setState({password})
-    }
+    handlePasswordUpdate = password => { this.setState({password}) }
 
     render(){
         return(
@@ -138,16 +135,10 @@ const styles = StyleSheet.create({
   })
 
   
-  const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch) => {
     return {
-      dispatch: (action) => { dispatch(action) }
+        dispatch: (action) => { dispatch(action) }
     }
-  }
-  
-  const mapStateToProps = (state) => {
-    return {
-        authenticated: state.authenticated,
-    }
-  }
+}
 
-  export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)
+export default connect(null, mapDispatchToProps)(LoginForm)

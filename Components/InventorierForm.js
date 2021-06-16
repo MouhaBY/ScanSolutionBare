@@ -7,6 +7,7 @@ import Database from '../Storage/Database'
 
 const db = new Database()
 
+
 class InventorierForm extends React.Component
 {
     constructor(props){
@@ -21,7 +22,6 @@ class InventorierForm extends React.Component
             message_barcode: '',
             message_location: '',
             message:'',
-            configuration:[],
             withQuantity: false,
             withLocationVerification : true,
             withBarcodeVerification : true
@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return {
-        authenticated: state.authenticated,
         user_token: state.user_token,
     }
   }

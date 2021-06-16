@@ -51,8 +51,8 @@ const AppNavigation = () => {
 
 const mapStateToProps = state => {
     return {
-      authenticated: state.authenticated
+        authenticated: state.authenticated
     }
-  }
+}
   
-  export default connect(mapStateToProps)(AppNavigation)
+export default connect(mapStateToProps)(AppNavigation)

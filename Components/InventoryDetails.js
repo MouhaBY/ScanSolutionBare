@@ -10,7 +10,7 @@ export default class InventoryDetails extends React.Component {
     constructor(props){
         super(props)
         this.state={
-            inventory_token: '',
+            inventory_token: {},
             inventorylist: []
         }
     }
@@ -36,8 +36,8 @@ export default class InventoryDetails extends React.Component {
         Alert.alert('Supprimer', 'Êtes vous sur de supprimer cette ligne ?', 
         [   { text: 'Annuler' },
             { text: 'Confirmer', 
-            onPress: async () => {
-                await db.deleteDetailInventaire(item_to_delete)
+            onPress: () => {
+                db.deleteDetailInventaire(item_to_delete)
                 this.get_inventory_details(this.state.inventory_token.id)
             }
             },

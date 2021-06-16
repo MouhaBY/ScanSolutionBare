@@ -2,6 +2,7 @@ import React from 'react'
 import {View, TouchableOpacity, Text, StyleSheet, Button, Alert} from 'react-native'
 import { connect } from 'react-redux'
 import BottomBar from './BottomBar'
+import {LOGIN, LOGOUT} from '../Store/Reducers/authenticationReducer'
 
 
 class Home extends React.Component 
@@ -11,7 +12,7 @@ class Home extends React.Component
     }
 
     logout(){
-        const action = { type: "LOGOUT", value: false }
+        const action = { type: LOGOUT, value: false }
         this.props.dispatch(action)
     }
 
