@@ -2,6 +2,7 @@ import React from 'react'
 import { TouchableOpacity, Text, Alert, StyleSheet } from 'react-native'
 import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers } from '../WS/API'
 import Database from '../Storage/Database'
+import RNBeep from 'react-native-a-beep'
 
 
 const db = new Database()
@@ -19,8 +20,12 @@ export default class SyncButton extends React.Component {
             const isSynced = await this.SyncTables(data.results)
             if (isSynced) { Alert.alert('Synchronisation', 'Synchronisation terminée') }
             else { Alert.alert('Synchronisation', 'Terminal à jour') }
+            RNBeep.beep()
         }
-        catch (err) { Alert.alert('Erreur Synchronisation', 'Synchronisation echouée') }
+        catch (err) { 
+            RNBeep.beep(false)
+            Alert.alert('Erreur', 'Synchronisation échouée') 
+        }
     }
 
     SyncTables = async (results) => {

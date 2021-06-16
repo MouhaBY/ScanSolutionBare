@@ -15,15 +15,15 @@ export function getProducts() {
 
 export function getLocations() {
     return new Promise((resolve, reject) => { 
-        resolve( { results: [ {id:"1", code: "10", name: "Emplacement 10"}, {id:"2", code: "20", name: "Emplacement 20"},  ] } ) 
+        resolve( { results: [ {id:"11", code: "10", name: "Emplacement 10"}, {id:"12", code: "20", name: "Emplacement 20"},  ] } ) 
     })
 }
 
 export function getUsers() {
     return new Promise((resolve, reject) => { 
-        resolve( { results: [ {id:1, username:"123", password:"123", contact:'Admin 123', isAdmin:1}, 
-        {id:2, username:"1", password:"1", contact:'user 1', isAdmin:0}, 
-        {id:3, username:"Test", password:"test", contact:'test user 1', isAdmin:0} ] } ) 
+        resolve( { results: [ {id:4, username:"123", password:"123", contact:'Admin 123', isAdmin:1}, 
+        {id:5, username:"1", password:"1", contact:'user 1', isAdmin:0}, 
+        {id:7, username:"Test", password:"test", contact:'test user 1', isAdmin:0} ] } ) 
     })
 }
 
