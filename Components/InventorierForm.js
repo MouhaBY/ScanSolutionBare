@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, TextInput, Button, TouchableOpacity, ScrollView
 import CheckBox from '@react-native-community/checkbox'
 import { connect } from 'react-redux'
 import Database from '../Storage/Database'
+import RNBeep from 'react-native-a-beep'
 
 
 const db = new Database()
@@ -86,6 +87,7 @@ class InventorierForm extends React.Component
             this.submit(inventory_row)
         }
         catch(err){
+            RNBeep.beep(false)
             if (err == 'Product unknown' ){
                 this.setState({message_barcode: 'Article ' + inventory_row.Barcode +  ' non reconnu'})
                 this.setState({barcode: ''})
@@ -108,6 +110,7 @@ class InventorierForm extends React.Component
             date: dateNow })
         this.setState({message: 'Article ' + inventory_row.Barcode +' Enregistré'})
         this.reset_form_values()
+        RNBeep.beep()
     }
 
     reset_form_values(){
@@ -119,7 +122,7 @@ class InventorierForm extends React.Component
 
     render(){        
         return(
-            <ScrollView style={{flex:1,}}>
+            <View style={{flex:1,}}>
                 <TouchableOpacity style={styles.top_container} onPress = {() => this.accessInventoryDetails(this.state.inventory_token)} >
                     <Text style={styles.title_container}>{"Inventaire en cours : " + this.state.inventory_token.name}</Text>
                     <Text style={{color:'white'}}>{"Id de l'inventaire " + this.state.inventory_token.id + " | Date du "+ this.state.inventory_token.date}</Text>
@@ -188,7 +191,7 @@ class InventorierForm extends React.Component
                                 }
                         autoFocus={true}/>
                 </View>
-            </ScrollView>
+            </View>
         )
     }
 }

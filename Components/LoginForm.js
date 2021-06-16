@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, Touc
 import { connect } from 'react-redux'
 import Database from '../Storage/Database'
 import { LOGIN, LOGOUT } from '../Store/Reducers/authenticationReducer'
+import RNBeep from 'react-native-a-beep'
 
 
 const db = new Database()
@@ -38,16 +39,19 @@ class LoginForm extends React.Component
             try{
                 let user_found = await db.searchUser(this.state.username)
                 if (this.state.password === user_found.password) {
+                    RNBeep.beep()
                     const action = { type: LOGIN, value: user_found }
                     this.props.dispatch(action)
                 }
-                else { 
+                else {
+                    RNBeep.beep(false)
                     Alert.alert('Accès interdit', 'Mot de passe erroné')
                     const action = { type: LOGOUT, value: {} }
                     this.props.dispatch(action)
                 }
             }
             catch(err) {
+                RNBeep.beep(false)
                 Alert.alert('Accès interdit', 'Utilisateur introuvable')
                 const action = { type: LOGOUT, value: {} }
                 this.props.dispatch(action)
@@ -61,7 +65,7 @@ class LoginForm extends React.Component
 
     render(){
         return(
-            <ScrollView>
+            <View style={{flex:1}}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
                     <View 
                     style={styles.container}>
@@ -95,7 +99,7 @@ class LoginForm extends React.Component
                             />
                     </View>
                 </TouchableWithoutFeedback>
-            </ScrollView>
+            </View>
         )
     }
 }
@@ -105,7 +109,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop:"10%"
     },
     textcontainer:{
         fontWeight: "bold",

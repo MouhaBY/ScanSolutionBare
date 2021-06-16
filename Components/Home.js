@@ -23,7 +23,7 @@ class Home extends React.Component
     render(){
         return(
             <View style={{flex:1}}>
-                <ScrollView style={{flex:1,}}>
+                <ScrollView>
                     <TouchableOpacity 
                     style={[styles.buttonContainer, {backgroundColor:'#2196F3'}]}
                     onPress={() => {this.accessMenu("Inventaires")}}>
