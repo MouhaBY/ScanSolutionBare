@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, TouchableOpacity, Text, StyleSheet, Button, Alert} from 'react-native'
+import {View, TouchableOpacity, Text, StyleSheet, Button, Alert, ScrollView} from 'react-native'
 import { connect } from 'react-redux'
 import BottomBar from './BottomBar'
 import {LOGIN, LOGOUT} from '../Store/Reducers/authenticationReducer'
@@ -23,7 +23,7 @@ class Home extends React.Component
     render(){
         return(
             <View style={{flex:1}}>
-                <View style={{flex:1, justifyContent: 'center'}}>
+                <ScrollView style={{flex:1,}}>
                     <TouchableOpacity 
                     style={[styles.buttonContainer, {backgroundColor:'#2196F3'}]}
                     onPress={() => {this.accessMenu("Inventaires")}}>
@@ -58,7 +58,7 @@ class Home extends React.Component
                     onPress={() => {this.logout()}}>
                         <Text style={styles.textButtonContainer}>Se déconnecter</Text>
                     </TouchableOpacity>
-                </View>
+                </ScrollView>
                 <BottomBar style={{bottom: 0}}/>
             </View>
         )
@@ -101,7 +101,7 @@ const mapDispatchToProps = (dispatch) => {
   const mapStateToProps = (state) => {
     return {
         authenticated: state.authReducer.authenticated,
-        user_token: state.authReducer.user_token
+        user_token: state.authReducer.user_token,
     }
   }
 

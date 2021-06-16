@@ -29,9 +29,9 @@ export function getUsers() {
 
 export function getConfiguration() {
     return new Promise((resolve, reject) => { 
-        resolve( { results: [ {key:"withLocationVerification", state:0}, 
-        {key:"withBarcodeVerification", state:0}, 
-        {key:"withQuantity", state:0} ] } ) 
+        resolve( { results: [ { key:"withLocationVerification", state:0 }, 
+        { key:"withBarcodeVerification", state:0 }, 
+        { key:"withQuantity", state:0 } ] } ) 
     })
 }
 

@@ -3,8 +3,7 @@ import authReducer from './Reducers/authenticationReducer'
 
 
 const reducer = combineReducers({
-    authReducer,
-    
+    authReducer
 })
 
 const store = createStore(reducer)

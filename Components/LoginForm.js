@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native'
 import { connect } from 'react-redux'
 import Database from '../Storage/Database'
 import { LOGIN, LOGOUT } from '../Store/Reducers/authenticationReducer'
@@ -61,39 +61,41 @@ class LoginForm extends React.Component
 
     render(){
         return(
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
-            <View 
-            style={styles.container}>
-                <Image source={require('../Images/logo.png')} style={styles.image}/>
-                <Text style={styles.textcontainer}>Scan Solutions</Text>
-                <TextInput 
-                    value={this.state.username} 
-                    onChangeText={this.handleUsernameUpdate} 
-                    style={styles.inputContainer} 
-                    placeholder="Nom d'utilisateur"
-                    autoFocus={true}
-                    ref={(input) => { this.firstTextInput = input }}
-                    //blurOnSubmit={false}
-                    onSubmitEditing={() => { this.secondTextInput.focus() }}
-                    />
-                <TextInput 
-                    value={this.state.password} 
-                    onChangeText={this.handlePasswordUpdate} 
-                    style={styles.inputContainer} 
-                    placeholder='Mot de passe' 
-                    secureTextEntry={true}
-                    autoCapitalize='none'
-                    ref={(input) => { this.secondTextInput = input }}
-                    onSubmitEditing={() => { this._login() }}
-                />
-                <Button 
-                    title={'Se connecter'} 
-                    style={styles.buttonContainer} 
-                    onPress={() => this._login()} 
-                    disabled={!this.state.isFormValid}
-                    />
-            </View>
-            </TouchableWithoutFeedback>
+            <ScrollView>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+                    <View 
+                    style={styles.container}>
+                        <Image source={require('../Images/logo.png')} style={styles.image}/>
+                        <Text style={styles.textcontainer}>Scan Solutions</Text>
+                        <TextInput 
+                            value={this.state.username} 
+                            onChangeText={this.handleUsernameUpdate} 
+                            style={styles.inputContainer} 
+                            placeholder="Nom d'utilisateur"
+                            autoFocus={true}
+                            ref={(input) => { this.firstTextInput = input }}
+                            //blurOnSubmit={false}
+                            onSubmitEditing={() => { this.secondTextInput.focus() }}
+                            />
+                        <TextInput 
+                            value={this.state.password} 
+                            onChangeText={this.handlePasswordUpdate} 
+                            style={styles.inputContainer} 
+                            placeholder='Mot de passe' 
+                            secureTextEntry={true}
+                            autoCapitalize='none'
+                            ref={(input) => { this.secondTextInput = input }}
+                            onSubmitEditing={() => { this._login() }}
+                        />
+                        <Button 
+                            title={'Se connecter'} 
+                            style={styles.buttonContainer} 
+                            onPress={() => this._login()} 
+                            disabled={!this.state.isFormValid}
+                            />
+                    </View>
+                </TouchableWithoutFeedback>
+            </ScrollView>
         )
     }
 }

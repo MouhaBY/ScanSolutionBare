@@ -370,7 +370,7 @@ export default class Database {
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                    'CREATE TABLE IF NOT EXISTS Details (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, inventory_id INTEGER NOT NULL, location TEXT NOT NULL, barcode TEXT NOT NULL, quantity REAL NOT NULL, user_id INTEGER)', [], 
+                    'CREATE TABLE IF NOT EXISTS Details (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, inventory_id INTEGER NOT NULL, location TEXT NOT NULL, barcode TEXT NOT NULL, quantity REAL NOT NULL, user_id INTEGER, date TEXT)', [], 
                 (tx, results) => { 
                     resolve(results) 
                     console.log('table details created')
@@ -407,18 +407,20 @@ export default class Database {
         return new Promise((resolve) => {
             const details = []
             db.transaction((tx) => {
-                tx.executeSql('SELECT id, location, barcode, quantity FROM Details WHERE inventory_id = ?', [id_inventaire],
+                tx.executeSql('SELECT id, location, barcode, quantity, user_id, date FROM Details WHERE inventory_id = ?', [id_inventaire],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) {
                         for (let i = 0; i < len; i++) {
                             let row = results.rows.item(i)
-                            const { id, location, barcode, quantity } = row
+                            const { id, location, barcode, quantity, user_id, date } = row
                             details.push({
                                 id, 
                                 location, 
                                 barcode, 
-                                quantity
+                                quantity,
+                                user_id,
+                                date
                               })
                         } 
                         resolve(details)  
@@ -433,8 +435,8 @@ export default class Database {
         const db = await this.initDB()
         return new Promise((resolve) => {
             db.transaction((tx) => {
-                tx.executeSql('INSERT INTO Details (inventory_id, location, barcode, quantity, user_id) VALUES (?, ?, ?, ?, ?)', 
-                [item.inventory_id, item.location, item.barcode, item.quantity, item.user_id],
+                tx.executeSql('INSERT INTO Details (inventory_id, location, barcode, quantity, user_id, date) VALUES (?, ?, ?, ?, ?, ?)', 
+                [item.inventory_id, item.location, item.barcode, item.quantity, item.user_id, item.date],
                 (tx, results) => { resolve(results) })
             })
         })

@@ -48,9 +48,10 @@ export default class InventoryDetails extends React.Component {
         <TouchableOpacity 
         style={styles.table_row}
         onLongPress={() => { this.delete_Row(item.id) }}>
-            <Text style={[styles.table_row_txt, {width: "40%"}]}>{item.location}</Text>
-            <Text style={[styles.table_row_txt, {width: "40%"}]}>{item.barcode}</Text>
-            <Text style={[styles.table_row_txt, {width: "20%"}]}>{item.quantity}</Text>
+            <Text style={[styles.table_row_txt, {width: "30%"}]}>{item.location}</Text>
+            <Text style={[styles.table_row_txt, {width: "30%"}]}>{item.barcode}</Text>
+            <Text style={[styles.table_row_txt, {width: "15%"}]}>{item.quantity}</Text>
+            <Text style={[styles.table_row_txt, {width: "25%"}]}>{item.date}</Text>
         </TouchableOpacity>
         )
 
@@ -63,9 +64,10 @@ export default class InventoryDetails extends React.Component {
                 </TouchableOpacity>
                 <View style={{alignItems: 'center', justifyContent: 'center', height:"80%"}}>
                     <View style={styles.table_header}>
-                        <Text style={[styles.table_header_txt, {width: "35%"}]}>Emplacement</Text>
-                        <Text style={[styles.table_header_txt, {width: "40%"}]}>Code à barre</Text>
-                        <Text style={[styles.table_header_txt, {width: "25%"}]}>Quantité</Text>
+                        <Text style={[styles.table_header_txt, {width: "30%"}]}>Emp.</Text>
+                        <Text style={[styles.table_header_txt, {width: "30%"}]}>Code.</Text>
+                        <Text style={[styles.table_header_txt, {width: "15%"}]}>Qté</Text>
+                        <Text style={[styles.table_header_txt, {width: "25%"}]}>Date</Text>
                     </View>
                     <FlatList
                         data={this.state.inventorylist}
@@ -119,7 +121,9 @@ const styles = StyleSheet.create({
         padding:5, 
         height:35,
         textAlign:"center",
-        fontSize:14, 
+        alignItems:"center",
+        justifyContent:'center',
+        fontSize:11, 
         backgroundColor:'#eff6fc',
     },    
 })

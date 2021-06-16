@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, StyleSheet, TextInput, Button, TouchableOpacity, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
+import { Text, View, StyleSheet, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native'
 import CheckBox from '@react-native-community/checkbox'
 import { connect } from 'react-redux'
 import Database from '../Storage/Database'
@@ -97,12 +97,15 @@ class InventorierForm extends React.Component
     }
 
     submit = async (inventory_row) => {
+        let now = new Date()
+        let dateNow = now.getDate()+"/"+parseInt(now.getMonth()+1)+"/"+now.getFullYear()+" "+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds()+":"+now.getUTCMilliseconds()
         await db.addDetailInventaire({ 
             inventory_id: this.state.inventory_token.id, 
             location: inventory_row.Location, 
             barcode: inventory_row.Barcode, 
             quantity: Number(inventory_row.Quantity), 
-            user_id: this.props.user_token.id })
+            user_id: this.props.user_token.id,
+            date: dateNow })
         this.setState({message: 'Article ' + inventory_row.Barcode +' Enregistré'})
         this.reset_form_values()
     }
@@ -116,7 +119,7 @@ class InventorierForm extends React.Component
 
     render(){        
         return(
-            <View style={{flex:1,}}>
+            <ScrollView style={{flex:1,}}>
                 <TouchableOpacity style={styles.top_container} onPress = {() => this.accessInventoryDetails(this.state.inventory_token)} >
                     <Text style={styles.title_container}>{"Inventaire en cours : " + this.state.inventory_token.name}</Text>
                     <Text style={{color:'white'}}>{"Id de l'inventaire " + this.state.inventory_token.id + " | Date du "+ this.state.inventory_token.date}</Text>
@@ -185,7 +188,7 @@ class InventorierForm extends React.Component
                                 }
                         autoFocus={true}/>
                 </View>
-            </View>
+            </ScrollView>
         )
     }
 }
