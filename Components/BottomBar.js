@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     return {
-      user_token: state.user_token
+      user_token: state.authReducer.user_token
     }
 }
 

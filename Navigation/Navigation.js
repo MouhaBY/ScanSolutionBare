@@ -18,10 +18,10 @@ import Areas from '../Components/Areas'
 
 const Stack = createStackNavigator()
 
-const AppNavigation = () => {    
+const AppNavigation = () => {
     const state = store.getState()
-    const authenticated = state.authenticated
-
+    const authenticated = state.authReducer.authenticated
+    
     if (authenticated) {
         return(
             <NavigationContainer>             
@@ -37,7 +37,7 @@ const AppNavigation = () => {
                 </Stack.Navigator>
             </NavigationContainer>
         )
-                    }
+    }
     else {
         return(
             <NavigationContainer>             
@@ -51,7 +51,7 @@ const AppNavigation = () => {
 
 const mapStateToProps = state => {
     return {
-        authenticated: state.authenticated
+        authenticated: state.authReducer.authenticated
     }
 }
   

@@ -43,13 +43,13 @@ class LoginForm extends React.Component
                 }
                 else { 
                     Alert.alert('Accès interdit', 'Mot de passe erroné')
-                    const action = { type: LOGOUT, value: false }
+                    const action = { type: LOGOUT, value: {} }
                     this.props.dispatch(action)
                 }
             }
             catch(err) {
                 Alert.alert('Accès interdit', 'Utilisateur introuvable')
-                const action = { type: LOGOUT, value: false }
+                const action = { type: LOGOUT, value: {} }
                 this.props.dispatch(action)
             }
         }

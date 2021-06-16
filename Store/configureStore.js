@@ -3,10 +3,10 @@ import authReducer from './Reducers/authenticationReducer'
 
 
 const reducer = combineReducers({
-    authenticated : authReducer,
-    user_token : authReducer,
+    authReducer,
+    
 })
 
-const store = createStore(authReducer)
+const store = createStore(reducer)
 
 export default store

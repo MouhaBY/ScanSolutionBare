@@ -12,7 +12,7 @@ class Home extends React.Component
     }
 
     logout(){
-        const action = { type: LOGOUT, value: false }
+        const action = { type: LOGOUT, value: {} }
         this.props.dispatch(action)
     }
 
@@ -100,8 +100,8 @@ const mapDispatchToProps = (dispatch) => {
   
   const mapStateToProps = (state) => {
     return {
-        authenticated: state.authenticated,
-        user_token: state.user_token
+        authenticated: state.authReducer.authenticated,
+        user_token: state.authReducer.user_token
     }
   }
 
