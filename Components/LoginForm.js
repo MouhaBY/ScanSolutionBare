@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native'
 import { connect } from 'react-redux'
 import Database from '../Storage/Database'
-import { LOGIN, LOGOUT } from '../Store/Reducers/authenticationReducer'
+import { LOGIN, LOGOUT } from '../Redux/Reducers/authenticationReducer'
 import RNBeep from 'react-native-a-beep'
 
 

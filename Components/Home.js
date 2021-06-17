@@ -2,7 +2,7 @@ import React from 'react'
 import {View, TouchableOpacity, Text, StyleSheet, Button, Alert, ScrollView} from 'react-native'
 import { connect } from 'react-redux'
 import BottomBar from './BottomBar'
-import {LOGIN, LOGOUT} from '../Store/Reducers/authenticationReducer'
+import {LOGIN, LOGOUT} from '../Redux/Reducers/authenticationReducer'
 
 
 class Home extends React.Component 
