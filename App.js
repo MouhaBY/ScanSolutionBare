@@ -2,7 +2,7 @@ import 'react-native-gesture-handler'
 import React from 'react'
 import AppNavigation from './Navigation/Navigation'
 import {Provider} from 'react-redux'
-import Store from './Store/configureStore'
+import Store from './Redux/configureStore'
 import Database from './Storage/Database'
 
 
