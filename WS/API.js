@@ -1,38 +1,59 @@
 const API_TOKEN = "f78171b682bc4c08986c8067a8113ce6"
-
+const serverAddress = '192.168.76.66:3000'
 
 export async function getWhatToSync(){
-    return new Promise((resolve, reject) => { 
-        resolve( { results: ['Products', 'Areas', 'Configuration', 'Users'] } )
-    })
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/synchronisations/all')
+        const { results } = await response.json()
+        return results
+    }
+    catch(err){
+        return { results: [] }
+    }
 }
 
-export function getProducts() {
-    return new Promise((resolve, reject) => { 
-        resolve( { results: [ {id:"1", code: "1", name: "Article 1"}, {id:"2", code: "2", name: "Article 2"},  ] } ) 
-    })
+export async function getProducts() {
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/products/all')
+        const { results } = await response.json()
+        return results
+    }
+    catch(err){
+        return { results: [] }
+    }
 }
 
-export function getLocations() {
-    return new Promise((resolve, reject) => { 
-        resolve( { results: [ {id:"11", code: "10", name: "Emplacement 10"}, {id:"12", code: "20", name: "Emplacement 20"},  ] } ) 
-    })
+export async function getLocations() {
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/locations/all')
+        const { results } = await response.json()
+        return results
+    }
+    catch(err){
+        return { results: [] }
+    }
 }
 
-export function getUsers() {
-    return new Promise((resolve, reject) => { 
-        resolve( { results: [ {id:4, username:"123", password:"123", contact:'Admin 123', isAdmin:1}, 
-        {id:5, username:"1", password:"1", contact:'user 1', isAdmin:0}, 
-        {id:7, username:"Test", password:"test", contact:'test user 1', isAdmin:0} ] } ) 
-    })
+export async function getUsers() {
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/auth/all')
+        const { results } = await response.json()
+        return results
+    }
+    catch(err){
+        return { results: [] }
+    }
 }
 
-export function getConfiguration() {
-    return new Promise((resolve, reject) => { 
-        resolve( { results: [ { key:"withLocationVerification", state:0 }, 
-        { key:"withBarcodeVerification", state:0 }, 
-        { key:"withQuantity", state:0 } ] } ) 
-    })
+export async function getConfiguration() {
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/configurations/all')
+        const { results } = await response.json()
+        return results
+    }
+    catch(err){
+        return { results: [] }
+    }
 }
 
 

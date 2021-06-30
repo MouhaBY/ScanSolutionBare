@@ -1,12 +1,12 @@
 import React from 'react'
-import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback, ScrollView, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
-import Database from '../Storage/Database'
+import User from '../Models/Users'
 import { LOGIN, LOGOUT } from '../Redux/Reducers/authenticationReducer'
 import RNBeep from 'react-native-a-beep'
 
 
-const db = new Database()
+const user = new User()
 
 
 class LoginForm extends React.Component 
@@ -17,7 +17,12 @@ class LoginForm extends React.Component
             username: '',
             password: '',
             isFormValid: false,
+            configuration:false,
+            serveur:'192.168.76.66:3000'
         }
+    }
+
+    componentDidMount(){
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -37,7 +42,7 @@ class LoginForm extends React.Component
     _login = async () => {
         if (this.state.username !== "" && this.state.password !== "") {
             try{
-                let user_found = await db.searchUser(this.state.username)
+                let user_found = await user.searchUser(this.state.username)
                 if (this.state.password === user_found.password) {
                     RNBeep.beep()
                     const action = { type: LOGIN, value: user_found }
@@ -62,10 +67,34 @@ class LoginForm extends React.Component
     handleUsernameUpdate = username => { this.setState({username}) }
 
     handlePasswordUpdate = password => { this.setState({password}) }
+    
+    handleserveurUpdate = serveur => { this.setState({serveur}) }
 
     render(){
         return(
             <View style={{flex:1}}>
+                <View style={{flexDirection:'row', margin:3}}>
+                <TouchableOpacity 
+                onPress={() => this.setState({ configuration: !this.state.configuration })} 
+                style={{alignItems:'center', alignItems:'flex-start', justifyContent:'flex-start', margin:10, }}>
+                    <Image source={require('../Images/settings.png')} style={{width:30, height:30,}}/>
+                </TouchableOpacity>
+                {this.state.configuration &&
+                    <View style={{flex:1, flexDirection:'row'}}>
+                        <TextInput 
+                        style={{margin:1, flex:1, borderColor:'grey', borderWidth:1}} 
+                        autoFocus={true}
+                        placeholder="Adresse Serveur"
+                        value={this.state.serveur} 
+                        onChangeText={this.handleserveurUpdate} />
+                        <TouchableOpacity
+                        onPress={() => { }}
+                        style={{alignItems:'center', justifyContent:'center', backgroundColor:'#2196F3', margin:1, width:60 }}>
+                            <Text style={{color:'white', padding:3, fontSize: 14}}>Submit</Text>
+                        </TouchableOpacity> 
+                    </View>
+                }
+                </View>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
                     <View 
                     style={styles.container}>
@@ -135,7 +164,7 @@ const styles = StyleSheet.create({
     image:{
         width: 70,
         height: 80,
-        margin: 10,
+        margin: 5,
         resizeMode: 'stretch',
     }
   })
