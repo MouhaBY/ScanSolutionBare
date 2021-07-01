@@ -1,9 +1,10 @@
 import React from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native'
-import Database from '../Storage/Database'
+import { Text, View, StyleSheet, FlatList } from 'react-native'
+import Area from '../Models/Areas'
 
 
-const db = new Database()
+const area = new Area()
+
 
 export default class Areas extends React.Component {
     constructor(props){
@@ -14,7 +15,7 @@ export default class Areas extends React.Component {
     }
 
     get_Areas = async () => {
-        let Areaslist = await db.getAreas()
+        let Areaslist = await area.getAreas()
         try{
             this.setState({Areaslist})
         }

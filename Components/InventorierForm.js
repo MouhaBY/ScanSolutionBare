@@ -2,11 +2,17 @@ import React from 'react'
 import { Text, View, StyleSheet, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native'
 import CheckBox from '@react-native-community/checkbox'
 import { connect } from 'react-redux'
-import Database from '../Storage/Database'
+import Configuration from '../Models/Configurations'
 import RNBeep from 'react-native-a-beep'
+import Detail from '../Models/Details'
+import Product from '../Models/Products'
+import Area from '../Models/Areas'
 
 
-const db = new Database()
+const configuration = new Configuration()
+const detail = new Detail()
+const area = new Area()
+const product = new Product()
 
 
 class InventorierForm extends React.Component
@@ -30,7 +36,7 @@ class InventorierForm extends React.Component
     }
 
     submitConfiguration = async () => {
-        await db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -57,15 +63,15 @@ class InventorierForm extends React.Component
     cast_to_bool(data_state){ if (data_state > 0) { return true } else { return false } }
 
     readConfiguration = async () => {
-        let withLocationVerificationState = await db.getConfiguration("withLocationVerification")
+        let withLocationVerificationState = await configuration.getConfiguration("withLocationVerification")
         let withLocationVerification = this.cast_to_bool(withLocationVerificationState)
         this.setState({withLocationVerification})
 
-        let withBarcodeVerificationState = await db.getConfiguration("withBarcodeVerification")
+        let withBarcodeVerificationState = await configuration.getConfiguration("withBarcodeVerification")
         let withBarcodeVerification = this.cast_to_bool(withBarcodeVerificationState)
         this.setState({withBarcodeVerification})
 
-        let withQuantityState = await db.getConfiguration("withQuantity")
+        let withQuantityState = await configuration.getConfiguration("withQuantity")
         let withQuantity = this.cast_to_bool(withQuantityState)
         this.setState({withQuantity})
     }
@@ -79,10 +85,10 @@ class InventorierForm extends React.Component
     verify_to_submit = async (inventory_row) => {
         try{
             if (this.state.withLocationVerification){
-                await db.searchArea(inventory_row.Location)
+                await area.searchArea(inventory_row.Location)
             }
             if (this.state.withBarcodeVerification){
-                await db.searchProduct(inventory_row.Barcode)
+                await product.searchProduct(inventory_row.Barcode)
             }
             this.submit(inventory_row)
         }
@@ -92,7 +98,7 @@ class InventorierForm extends React.Component
                 this.setState({message_barcode: 'Article ' + inventory_row.Barcode +  ' non reconnu'})
                 this.setState({barcode: ''})
             }
-            if (err == 'Location unknown' ){
+            if (err == 'Area unknown' ){
                 this.setState({message_location: 'Emplacement ' + inventory_row.Location + ' non reconnu'})
             }
         }
@@ -101,7 +107,7 @@ class InventorierForm extends React.Component
     submit = async (inventory_row) => {
         let now = new Date()
         let dateNow = now.getDate()+"/"+parseInt(now.getMonth()+1)+"/"+now.getFullYear()+" "+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds()+":"+now.getUTCMilliseconds()
-        await db.addDetailInventaire({ 
+        await detail.addDetailInventaire({ 
             inventory_id: this.state.inventory_token.id, 
             location: inventory_row.Location, 
             barcode: inventory_row.Barcode, 

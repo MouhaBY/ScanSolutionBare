@@ -1,9 +1,9 @@
 import React from 'react'
 import {View, Text, StyleSheet, Button, Image, Alert, TextInput, FlatList, TouchableOpacity} from 'react-native'
-import Database from '../Storage/Database'
+import Inventory from '../Models/Inventories'
 
 
-const db = new Database()
+const inventory = new Inventory()
 
 
 class InventoriesDetailsMenu extends React.Component 
@@ -20,7 +20,7 @@ class InventoriesDetailsMenu extends React.Component
       }
     
     getInventoriesList = async () => {
-        const inventaires = await db.getInventaires()
+        const inventaires = await inventory.getInventaires()
         this.setState({inventaires})
     }
 

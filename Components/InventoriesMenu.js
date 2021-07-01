@@ -1,10 +1,10 @@
 import React from 'react'
 import {View, Text, StyleSheet, Button, Image, Alert, TextInput, FlatList, TouchableOpacity} from 'react-native'
 import {connect} from 'react-redux'
-import Database from '../Storage/Database'
+import Invetory from '../Models/Inventories'
 
 
-const db = new Database()
+const inventory = new Invetory()
 
 class Inventories extends React.Component 
 {
@@ -19,7 +19,7 @@ class Inventories extends React.Component
     }
 
     getInventoriesList = async () => {
-        const inventaires = await db.getInventaires()
+        const inventaires = await inventory.getInventaires()
         this.setState({inventaires})
     }
 
@@ -53,7 +53,7 @@ class Inventories extends React.Component
         let today = new Date()
         let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
         this.setState({ toAdd: !this.state.toAdd })
-        await db.insertInventaire({ name: this.state.inventaire_to_add, date: completeDate })
+        await inventory.insertInventaire({ name: this.state.inventaire_to_add, date: completeDate, state:1 })
         this._reset_form_values()
         this.componentDidMount()
     }

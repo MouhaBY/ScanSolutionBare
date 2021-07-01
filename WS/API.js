@@ -1,7 +1,15 @@
+import store from '../Redux/configureStore'
+
 const API_TOKEN = "f78171b682bc4c08986c8067a8113ce6"
-const serverAddress = '192.168.76.66:3000'
+
+function getAddress(){
+    let state = store.getState()
+    let serverAddress = state.configReducer.serverAddress
+    return serverAddress
+}
 
 export async function getWhatToSync(){
+    let serverAddress = getAddress()
     try{
         const response = await fetch('http://'+serverAddress+'/api/synchronisations/all')
         const { results } = await response.json()
@@ -13,6 +21,7 @@ export async function getWhatToSync(){
 }
 
 export async function getProducts() {
+    let serverAddress = getAddress()
     try{
         const response = await fetch('http://'+serverAddress+'/api/products/all')
         const { results } = await response.json()
@@ -24,6 +33,7 @@ export async function getProducts() {
 }
 
 export async function getLocations() {
+    let serverAddress = getAddress()
     try{
         const response = await fetch('http://'+serverAddress+'/api/locations/all')
         const { results } = await response.json()
@@ -35,6 +45,7 @@ export async function getLocations() {
 }
 
 export async function getUsers() {
+    let serverAddress = getAddress()
     try{
         const response = await fetch('http://'+serverAddress+'/api/auth/all')
         const { results } = await response.json()
@@ -46,6 +57,7 @@ export async function getUsers() {
 }
 
 export async function getConfiguration() {
+    let serverAddress = getAddress()
     try{
         const response = await fetch('http://'+serverAddress+'/api/configurations/all')
         const { results } = await response.json()

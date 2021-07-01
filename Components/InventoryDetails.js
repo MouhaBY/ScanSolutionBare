@@ -1,9 +1,9 @@
 import React from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native'
-import Database from '../Storage/Database'
+import Detail from '../Models/Details'
 
 
-const db = new Database()
+const detail = new Detail()
 
 
 export default class InventoryDetails extends React.Component {
@@ -18,7 +18,7 @@ export default class InventoryDetails extends React.Component {
     get_inventory_details = async (id_inv) => {
         this.setState({inventorylist:[]})
         try{
-            const inventorylist = await db.getDetailsInventaires(id_inv)
+            const inventorylist = await detail.getDetailsInventaires(id_inv)
             this.setState({inventorylist})
         }catch(err){
             console.log('catch getting inventaires')

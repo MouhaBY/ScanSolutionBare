@@ -1,10 +1,10 @@
 import React from 'react'
 import {View, Text, StyleSheet, Button, Image, Alert, TextInput, FlatList} from 'react-native'
-import CheckBox from '@react-native-community/checkbox';
-import Database from '../Storage/Database'
+import CheckBox from '@react-native-community/checkbox'
+import Configuration from '../Models/Configurations'
 
 
-const db = new Database()
+const configuration = new Configuration()
 
 export default class ConfigurationForm extends React.Component 
 {
@@ -22,15 +22,15 @@ export default class ConfigurationForm extends React.Component
     cast_from_bool(bool_state){ if (bool_state == true){ return 1 } else { return 0} }
 
     readConfiguration = async () => {
-        let withLocationVerificationState = await db.getConfiguration("withLocationVerification")
+        let withLocationVerificationState = await configuration.getConfiguration("withLocationVerification")
         let withLocationVerification = this.cast_to_bool(withLocationVerificationState)
         this.setState({withLocationVerification})
 
-        let withBarcodeVerificationState = await db.getConfiguration("withBarcodeVerification")
+        let withBarcodeVerificationState = await configuration.getConfiguration("withBarcodeVerification")
         let withBarcodeVerification = this.cast_to_bool(withBarcodeVerificationState)
         this.setState({withBarcodeVerification})
 
-        let withQuantityState = await db.getConfiguration("withQuantity")
+        let withQuantityState = await configuration.getConfiguration("withQuantity")
         let withQuantity = this.cast_to_bool(withQuantityState)
         this.setState({withQuantity})
     }
@@ -40,9 +40,9 @@ export default class ConfigurationForm extends React.Component
     }
 
     submitConfig = async () => {
-        await db.updateConfiguration([this.cast_from_bool(this.state.withBarcodeVerification),"withBarcodeVerification"])
-        await db.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"withLocationVerification"])
-        await db.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withBarcodeVerification),"withBarcodeVerification"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"withLocationVerification"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
         this.props.navigation.goBack()
     }
 

@@ -1,9 +1,12 @@
 import React from 'react'
 import { View, Text, StyleSheet, Button, Image, Alert, TextInput, Keyboard, TouchableWithoutFeedback, ScrollView, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
+import RNBeep from 'react-native-a-beep'
+
 import User from '../Models/Users'
 import { LOGIN, LOGOUT } from '../Redux/Reducers/authenticationReducer'
-import RNBeep from 'react-native-a-beep'
+import { SUBMIT } from '../Redux/Reducers/configurationReducer'
+import store from '../Redux/configureStore'
 
 
 const user = new User()
@@ -18,11 +21,14 @@ class LoginForm extends React.Component
             password: '',
             isFormValid: false,
             configuration:false,
-            serveur:'192.168.76.66:3000'
+            serverAddress:''
         }
     }
 
     componentDidMount(){
+        const state = store.getState()
+        const serverAddress = state.configReducer.serverAddress
+        this.setState({serverAddress})
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -64,11 +70,17 @@ class LoginForm extends React.Component
         }
     }
 
+    submitConfiguration = () => {
+        const action = { type: SUBMIT, value: this.state.serverAddress }
+        this.props.dispatch(action) 
+    }
+
+
     handleUsernameUpdate = username => { this.setState({username}) }
 
     handlePasswordUpdate = password => { this.setState({password}) }
     
-    handleserveurUpdate = serveur => { this.setState({serveur}) }
+    handleserveurUpdate = serverAddress => { this.setState({serverAddress}) }
 
     render(){
         return(
@@ -76,21 +88,21 @@ class LoginForm extends React.Component
                 <View style={{flexDirection:'row', margin:3}}>
                 <TouchableOpacity 
                 onPress={() => this.setState({ configuration: !this.state.configuration })} 
-                style={{alignItems:'center', alignItems:'flex-start', justifyContent:'flex-start', margin:10, }}>
-                    <Image source={require('../Images/settings.png')} style={{width:30, height:30,}}/>
+                style={styles.configuration}>
+                    <Image source={require('../Images/settings.png')} style={ styles.iconSettings}/>
                 </TouchableOpacity>
                 {this.state.configuration &&
                     <View style={{flex:1, flexDirection:'row'}}>
                         <TextInput 
-                        style={{margin:1, flex:1, borderColor:'grey', borderWidth:1}} 
+                        style={styles.textAddressInput} 
                         autoFocus={true}
                         placeholder="Adresse Serveur"
-                        value={this.state.serveur} 
+                        value={this.state.serverAddress} 
                         onChangeText={this.handleserveurUpdate} />
                         <TouchableOpacity
-                        onPress={() => { }}
-                        style={{alignItems:'center', justifyContent:'center', backgroundColor:'#2196F3', margin:1, width:60 }}>
-                            <Text style={{color:'white', padding:3, fontSize: 14}}>Submit</Text>
+                        onPress={() => { this.submitConfiguration() }}
+                        style={ styles.submit }>
+                            <Text style={styles.textSubmit}>Submit</Text>
                         </TouchableOpacity> 
                     </View>
                 }
@@ -139,6 +151,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    configuration:{
+        alignItems:'center', 
+        alignItems:'flex-start', 
+        justifyContent:'flex-start', 
+        margin:10 
+    },
+    submit:{
+        alignItems:'center', 
+        justifyContent:'center', 
+        backgroundColor:'#2196F3', 
+        margin:1, 
+        width:60 
+    },
+    textSubmit:{
+        color:'white', 
+        padding:3, 
+        fontSize: 14
+    },
+    iconSettings:{
+        width:30, 
+        height:30,
+    },
+    textAddressInput:{
+        margin:1, 
+        flex:1, 
+        borderColor:'grey', 
+        borderWidth:1
+    },
     textcontainer:{
         fontWeight: "bold",
         fontSize: 24, 
@@ -154,7 +194,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderColor: 'grey',
         backgroundColor:'white',
-        borderRadius: 5,
+        borderRadius: 25,
+        paddingLeft:25,
         borderWidth: 1,
         padding: 8,
         marginBottom: 15,
@@ -167,13 +208,18 @@ const styles = StyleSheet.create({
         margin: 5,
         resizeMode: 'stretch',
     }
-  })
+})
 
-  
+const mapStateToProps = (state) => {
+    return {
+        serverAddress: state.configReducer.serverAddress,
+    }
+}
+
 const mapDispatchToProps = (dispatch) => {
     return {
         dispatch: (action) => { dispatch(action) }
     }
 }
 
-export default connect(null, mapDispatchToProps)(LoginForm)
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)

@@ -8,7 +8,7 @@ export default class Products{
         return(db)
     }
     
-    async createTableAssets(){
+    async createTableProducts(){
         const  db = await this.initDB()
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {

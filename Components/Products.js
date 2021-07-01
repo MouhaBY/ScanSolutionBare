@@ -1,9 +1,10 @@
 import React from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native'
-import Database from '../Storage/Database'
+import { Text, View, StyleSheet, FlatList } from 'react-native'
+import Product from '../Models/Products'
 
 
-const db = new Database()
+const product = new Product()
+
 
 export default class Products extends React.Component {
     constructor(props){
@@ -14,7 +15,7 @@ export default class Products extends React.Component {
     }
 
     get_Products = async () => {
-        let Productslist = await db.getProducts()
+        let Productslist = await product.getProducts()
         try{
             this.setState({Productslist})
         }
