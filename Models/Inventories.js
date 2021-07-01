@@ -13,7 +13,7 @@ export default class Inventories{
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS Inventories (id INTEGER UNIQUE PRIMARY KEY, name TEXT NOT NULL, date TEXT NOT NULL, state TEXT NOT NULL)', [], 
+                'CREATE TABLE IF NOT EXISTS Inventories (id INTEGER UNIQUE PRIMARY KEY, name TEXT NOT NULL, date TEXT NOT NULL, state TEXT NOT NULL, isSynced TEXT)', [], 
                 (tx, results) => {
                     resolve(results) 
                     console.log('table inventaires created')
@@ -81,6 +81,41 @@ export default class Inventories{
                     }   
                     resolve(inventaires)              
                 })
+            })
+        })
+    }
+
+    async getInventairesNotSynced() {
+        const  db = await this.initDB()
+        return new Promise((resolve) => {
+            const inventaires = []
+            db.transaction((tx) => {
+                tx.executeSql('SELECT id, name, date, state, isSynced FROM Inventories WHERE isSynced IS NULL', [],
+                (tx, results) => {
+                    var len = results.rows.length
+                    for (let i = 0; i < len; i++) {
+                        let row = results.rows.item(i)
+                        const { id, name, date, state, isSynced } = row
+                        inventaires.push({
+                            id,
+                            name,
+                            date,
+                            state,
+                            isSynced
+                          })
+                    }   
+                    resolve(inventaires)              
+                })
+            })
+        })
+    }
+
+    async updateSyncedinventories() {
+        const  db = await this.initDB()
+        return new Promise((resolve) => {
+            db.transaction((tx) => {
+                tx.executeSql('UPDATE Inventories SET isSynced = 1 WHERE isSynced IS NULL', [],
+                (tx, results) => { resolve(results) })
             })
         })
     }

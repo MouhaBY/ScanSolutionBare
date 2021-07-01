@@ -17,8 +17,6 @@ const inventory = new Inventory()
 
 export default class Database {
 
-    /****************************** Data base creation, manipulation and config ******************************/
-
     async initDB(){
         const db = await openDatabase({name: 'data.db'})
         return(db)
@@ -40,6 +38,7 @@ export default class Database {
                 console.log('Creating Database')
                 await user.createTableUsers()
                 await configuration.createTableConfiguration()
+                await configuration.insertIntoConfigurations([{key:"withLocationVerification",state:0}, {key:"withBarcodeVerification",state:0}, {key:"withQuantity",state:0} ])
                 await inventory.createTableInventaires()
                 await detail.createTableDetails()
                 await product.createTableProducts()

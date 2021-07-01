@@ -68,6 +68,42 @@ export async function getConfiguration() {
     }
 }
 
+export async function postInventories(inventoriesData) {
+    let serverAddress = getAddress()
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/inventories/add', {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(inventoriesData),
+            })
+        if (response.ok) {
+            return true
+        }
+    }
+    catch(err){
+        const errMessage = await response.text()
+        return { errMessage }
+    }
+}
+
+export async function postDetailsInventories(DetailsData) {
+    let serverAddress = getAddress()
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/details/add', {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(DetailsData),
+            })
+        if (response.ok) {
+            return true
+        }
+    }
+    catch(err){
+        const errMessage = await response.text()
+        return { errMessage }
+    }
+}
+
 
 /*export function getInventories() {
     //const url = 'https://api.themoviedb.org/3/search/movie?api_key=' + API_TOKEN + '&language=fr&query=' + text + "&page=" + page

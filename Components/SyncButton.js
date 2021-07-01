@@ -2,17 +2,21 @@ import React from 'react'
 import { TouchableOpacity, Text, Alert, StyleSheet, Image } from 'react-native'
 import RNBeep from 'react-native-a-beep'
 
-import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers } from '../WS/API'
+import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers, postInventories, postDetailsInventories } from '../WS/API'
 import User from '../Models/Users'
 import Product from '../Models/Products'
 import Configuration from '../Models/Configurations'
 import Area from '../Models/Areas'
+import Invetory from '../Models/Inventories'
+import Detail from '../Models/Details'
 
 
+const inventory = new Invetory()
 const user = new User()
 const product = new Product()
 const configuration = new Configuration()
 const area = new Area()
+const detail = new Detail()
 
 
 export default class SyncButton extends React.Component {
@@ -28,6 +32,7 @@ export default class SyncButton extends React.Component {
         try {
             console.log('***synchronisation***')
             this.setState({isLoading:true})
+            await this.postSynchronisation()
             const data = await getWhatToSync()
             const isSynced = await this.SyncTables(data)
             if (isSynced) { Alert.alert('Synchronisation', 'Synchronisation terminée') }
@@ -39,6 +44,25 @@ export default class SyncButton extends React.Component {
             RNBeep.beep(false)
             this.setState({isLoading:false})
             Alert.alert('Erreur', 'Synchronisation échouée') 
+        }
+    }
+
+    postSynchronisation = async () => {
+        const inventoriesData = await inventory.getInventairesNotSynced()
+        if (inventoriesData.length > 0){
+            console.log('posting inventaires')
+            const resp = await postInventories(inventoriesData)
+            if(resp){
+                await inventory.updateSyncedinventories()
+            }
+        }
+        const detailsData = await detail.getNotSyncedDetailsInventaires()
+        if (detailsData.length > 0){
+            console.log('posting details inventaires')
+            const resp = await postDetailsInventories(detailsData)
+            if(resp){
+                await detail.updateSyncedDetailsInventaires()
+            }
         }
     }
 
