@@ -73,6 +73,7 @@ class LoginForm extends React.Component
     submitConfiguration = () => {
         const action = { type: SUBMIT, value: this.state.serverAddress }
         this.props.dispatch(action) 
+        this.setState({configuration:false})
     }
 
 
@@ -84,28 +85,28 @@ class LoginForm extends React.Component
 
     render(){
         return(
-            <View style={{flex:1}}>
+            <View style={{flex:1,}}>
                 <View style={{flexDirection:'row', margin:3}}>
-                <TouchableOpacity 
-                onPress={() => this.setState({ configuration: !this.state.configuration })} 
-                style={styles.configuration}>
-                    <Image source={require('../Images/settings.png')} style={ styles.iconSettings}/>
-                </TouchableOpacity>
-                {this.state.configuration &&
-                    <View style={{flex:1, flexDirection:'row'}}>
-                        <TextInput 
-                        style={styles.textAddressInput} 
-                        autoFocus={true}
-                        placeholder="Adresse Serveur"
-                        value={this.state.serverAddress} 
-                        onChangeText={this.handleserveurUpdate} />
-                        <TouchableOpacity
-                        onPress={() => { this.submitConfiguration() }}
-                        style={ styles.submit }>
-                            <Text style={styles.textSubmit}>Submit</Text>
-                        </TouchableOpacity> 
-                    </View>
-                }
+                    <TouchableOpacity 
+                    onPress={() => this.setState({ configuration: !this.state.configuration })} 
+                    style={styles.configuration}>
+                        <Image source={require('../Images/settings.png')} style={ styles.iconSettings}/>
+                    </TouchableOpacity>
+                    {this.state.configuration &&
+                        <View style={{flex:1, flexDirection:'row'}}>
+                            <TextInput 
+                            style={styles.textAddressInput} 
+                            autoFocus={true}
+                            placeholder="Adresse Serveur"
+                            value={this.state.serverAddress} 
+                            onChangeText={this.handleserveurUpdate} />
+                            <TouchableOpacity
+                            onPress={() => { this.submitConfiguration() }}
+                            style={ styles.submit }>
+                                <Text style={styles.textSubmit}>Submit</Text>
+                            </TouchableOpacity> 
+                        </View>
+                    }
                 </View>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
                     <View 
@@ -119,9 +120,8 @@ class LoginForm extends React.Component
                             placeholder="Nom d'utilisateur"
                             autoFocus={true}
                             ref={(input) => { this.firstTextInput = input }}
-                            //blurOnSubmit={false}
                             onSubmitEditing={() => { this.secondTextInput.focus() }}
-                            />
+                        />
                         <TextInput 
                             value={this.state.password} 
                             onChangeText={this.handlePasswordUpdate} 
@@ -132,12 +132,12 @@ class LoginForm extends React.Component
                             ref={(input) => { this.secondTextInput = input }}
                             onSubmitEditing={() => { this._login() }}
                         />
-                        <Button 
-                            title={'Se connecter'} 
-                            style={styles.buttonContainer} 
+                        <TouchableOpacity
+                            style={[styles.buttonContainer, {backgroundColor: !this.state.isFormValid ? '#bdbdbd': '#607d8b'}]} 
                             onPress={() => this._login()} 
-                            disabled={!this.state.isFormValid}
-                            />
+                            disabled={!this.state.isFormValid}>
+                            <Text style={{color:'white', fontSize:16}}>Se connecter</Text>
+                        </TouchableOpacity> 
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -182,12 +182,16 @@ const styles = StyleSheet.create({
     textcontainer:{
         fontWeight: "bold",
         fontSize: 24, 
-        marginBottom:40, 
+        marginBottom:20, 
         color:"black",
     },
     buttonContainer: {
         alignItems: 'center',
         justifyContent: 'center',
+        height:40,
+        backgroundColor:'blue',
+        borderRadius: 25,
+        width:"40%",
     },
     inputContainer: {
         alignItems: 'center',

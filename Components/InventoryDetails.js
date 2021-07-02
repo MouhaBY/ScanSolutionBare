@@ -13,6 +13,7 @@ export default class InventoryDetails extends React.Component {
             inventory_token: {},
             inventorylist: []
         }
+        this.renderItem = this.renderItem.bind(this);
     }
 
     get_inventory_details = async (id_inv) => {
@@ -32,19 +33,20 @@ export default class InventoryDetails extends React.Component {
         this.get_inventory_details(inventory_token.id)
     }
 
-    delete_Row = (item_to_delete) => {
+    delete_Row(item_to_delete){
         Alert.alert('Supprimer', 'Êtes vous sur de supprimer cette ligne ?', 
         [   { text: 'Annuler' },
             { text: 'Confirmer', 
             onPress: () => {
-                db.deleteDetailInventaire(item_to_delete)
+                detail.deleteDetailInventaire(item_to_delete)
                 this.get_inventory_details(this.state.inventory_token.id)
             }
             },
         ])
     }
 
-    _renderItem = ({item}) => (
+    renderItem({item}){
+        return(
         <TouchableOpacity 
         style={styles.table_row}
         onLongPress={() => { this.delete_Row(item.id) }}>
@@ -54,6 +56,11 @@ export default class InventoryDetails extends React.Component {
             <Text style={[styles.table_row_txt, {width: "25%"}]}>{item.date}</Text>
         </TouchableOpacity>
         )
+    }
+
+    keyExtractor(item){
+        return item.id
+    }
 
     render(){
         return(
@@ -71,9 +78,9 @@ export default class InventoryDetails extends React.Component {
                     </View>
                     <FlatList
                         data={this.state.inventorylist}
-                        keyExtractor={(item) => item.id}
-                        renderItem={this._renderItem}
-                        >
+                        keyExtractor={this.keyExtractor}
+                        renderItem={this.renderItem}
+                    >
                     </FlatList>
                 </View>
             </View>

@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, TouchableOpacity, Text, StyleSheet, Button, Alert, ScrollView} from 'react-native'
+import {View, TouchableOpacity, Text, StyleSheet, Button, Image, ScrollView} from 'react-native'
 import { connect } from 'react-redux'
 import BottomBar from './BottomBar'
 import {LOGIN, LOGOUT} from '../Redux/Reducers/authenticationReducer'
@@ -22,42 +22,52 @@ class Home extends React.Component
 
     render(){
         return(
-            <View style={{flex:1}}>
-                <ScrollView>
+            <View style={{flex:1, backgroundColor:'#FFF5EE'}}>
+                <ScrollView style={{marginTop:15}}>
+                <View style={styles.rowButton}>
                     <TouchableOpacity 
-                    style={[styles.buttonContainer, {backgroundColor:'#2196F3'}]}
+                    style={ styles.squareButtonContainer }
                     onPress={() => {this.accessMenu("Inventaires")}}>
+                        <Image source={require('../Images/inventory.png')} style={styles.image}/>
                         <Text style={styles.textButtonContainer}>Inventaire</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                    style={[styles.buttonContainer, {backgroundColor:'#757575'}]}
+                    style={styles.squareButtonContainer}
                     onPress={() => {this.accessMenu("Détails Inventaires")}}>
+                        <Image source={require('../Images/stockscreen.png')} style={styles.image}/>
                         <Text style={styles.textButtonContainer}>Détails</Text>
                     </TouchableOpacity>
-                    {this.props.user_token.isAdmin == 1 &&
-                    <TouchableOpacity 
-                    style={[styles.buttonContainer, {backgroundColor:'#bdbdbd'}]}
-                    onPress={() => {this.accessMenu("Configuration")}}>
-                        <Text style={styles.textButtonContainer}>Configuration</Text>
-                    </TouchableOpacity>
-                    }
-                    <View style={styles.viewMiniButtonContainer}>
+                </View>
+                <View style={styles.rowButton}>
                         <TouchableOpacity 
-                        style={[styles.miniButtonContainer, {marginRight:"2%"}]}
+                        style={styles.squareButtonContainer}
                         onPress={() => {this.accessMenu("Articles")}}>
+                            <Image source={require('../Images/products.png')} style={styles.image}/>
                             <Text style={styles.textButtonContainer}>Articles</Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
-                        style={styles.miniButtonContainer}
+                        style={styles.squareButtonContainer}
                         onPress={() => {this.accessMenu("Emplacements")}}>
+                            <Image source={require('../Images/warehouse.png')} style={styles.image}/>
                             <Text style={styles.textButtonContainer}>Empl.</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={styles.rowButton}>
+                    {this.props.user_token.isAdmin == 1 &&
                     <TouchableOpacity 
-                    style={[styles.buttonContainer, {backgroundColor:'#D0312D'}]}
-                    onPress={() => {this.logout()}}>
-                        <Text style={styles.textButtonContainer}>Se déconnecter</Text>
+                    style={styles.squareButtonContainer}
+                    onPress={() => {this.accessMenu("Configuration")}}>
+                        <Image source={require('../Images/process.png')} style={styles.image}/>
+                        <Text style={styles.textButtonContainer}>Configuration</Text>
                     </TouchableOpacity>
+                    }
+                    <TouchableOpacity 
+                    style={styles.squareButtonContainer}
+                    onPress={() => {this.logout()}}>
+                        <Image source={require('../Images/logout.png')} style={styles.image}/>
+                        <Text style={styles.textButtonContainer}>Déconnexion</Text>
+                    </TouchableOpacity>
+                    </View>
                 </ScrollView>
                 <BottomBar style={{bottom: 0}}/>
             </View>
@@ -66,12 +76,22 @@ class Home extends React.Component
 }
 
 const styles = StyleSheet.create({
+    rowButton:{flexDirection:'row', justifyContent:'center', margin:5},
     buttonContainer:{
         justifyContent:'center', 
         marginHorizontal:20, 
         height: 50,
         marginTop: 20,
         borderRadius: 5,
+    },
+    squareButtonContainer:{
+        justifyContent:'center',
+        alignItems:'center',
+        margin:5,
+        height: 90,
+        width: 130,
+        borderRadius: 5,
+        backgroundColor:'white',
     },
     viewMiniButtonContainer:{
         flexDirection:'row', 
@@ -87,9 +107,14 @@ const styles = StyleSheet.create({
     },
     textButtonContainer:{
         textAlign: 'center',
-        color:'white', 
-        fontSize: 20,
-    }
+        color:'#004578', 
+        fontSize: 16,
+    },
+    image:{
+        resizeMode: 'stretch',
+        height:50,
+        width:50,
+    },
 })
 
 const mapDispatchToProps = (dispatch) => {

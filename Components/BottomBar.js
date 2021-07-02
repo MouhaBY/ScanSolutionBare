@@ -12,7 +12,8 @@ class BottomBar extends React.Component
     render(){
         return(
             <View style={styles.main_container}>
-                <Text style={styles.text_container}>{"Utilisateur connecté : "+ this.props.user_token.contact}</Text>
+                <Text style={[styles.text_container,{fontWeight:'bold'}]}>{ this.props.user_token.isAdmin == '1' ? 'Administrateur connecté :' : 'Opérateur connecté :' }</Text>
+                <Text style={styles.text_container}>{ this.props.user_token.contact }</Text>
             </View>
         )
     }
@@ -22,13 +23,15 @@ const styles = StyleSheet.create({
         main_container:{
             backgroundColor:'#0078d4',
             height:30,
-            justifyContent:'center'
+            justifyContent:'flex-start',
+            alignItems:'center',
+            flexDirection:'row'
         },
         text_container:{
             color:'white',
             fontSize:14,
             justifyContent:'center',
-            marginLeft:5
+            marginLeft:5,
         }
     })
 

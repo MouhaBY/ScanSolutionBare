@@ -74,15 +74,16 @@ export default class Details{
         return new Promise((resolve) => {
             const details = []
             db.transaction((tx) => {
-                tx.executeSql('SELECT id, location, barcode, quantity, user_id, date, isSynced FROM Details WHERE isSynced IS NULL', [],
+                tx.executeSql('SELECT id, inventory_id, location, barcode, quantity, user_id, date, isSynced FROM Details WHERE isSynced IS NULL', [],
                 (tx, results) => {
                     var len = results.rows.length
                     if (len > 0) {
                         for (let i = 0; i < len; i++) {
                             let row = results.rows.item(i)
-                            const { id, location, barcode, quantity, user_id, date, isSynced } = row
+                            const { id, inventory_id, location, barcode, quantity, user_id, date, isSynced } = row
                             details.push({
                                 id, 
+                                inventory_id,
                                 location, 
                                 barcode, 
                                 quantity,

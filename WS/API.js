@@ -2,16 +2,37 @@ import store from '../Redux/configureStore'
 
 const API_TOKEN = "f78171b682bc4c08986c8067a8113ce6"
 
+
 function getAddress(){
     let state = store.getState()
     let serverAddress = state.configReducer.serverAddress
     return serverAddress
 }
 
+export async function loginAPI(username, password) {
+    let serverAddress = getAddress()
+    console.log(serverAddress)
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/auth/login', {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify({username:username, password:password}),
+            })        
+        if (response.ok) {
+            const results = await response.json() 
+            return results
+        }
+    }
+    catch(err){
+        const errMessage = await response.text()
+        return { errMessage }
+    }
+}
+
 export async function getWhatToSync(){
     let serverAddress = getAddress()
     try{
-        const response = await fetch('http://'+serverAddress+'/api/synchronisations/all')
+        const response = await fetch('http://'+serverAddress+'/api/synchronisations/all'+ '?api_key=' + API_TOKEN)
         const { results } = await response.json()
         return results
     }
@@ -128,11 +149,4 @@ export const sendInventoriesDetails = async (inventoriesData) => {
     const errMessage = await response.text()
     throw new Error(errMessage)
 }
-*/
-/*
-  export const fetchUsers = async () => {
-    const response = await fetch('https://randomuser.me/api/?results=50&nat=us')
-    const {results} = await response.json()
-    return results
-  }
 */

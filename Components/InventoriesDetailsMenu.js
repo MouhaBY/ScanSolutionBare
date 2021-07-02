@@ -37,13 +37,14 @@ class InventoriesDetailsMenu extends React.Component
                     data={this.state.inventaires}
                     keyExtractor={(item) => item.id}
                     renderItem={({item}) => (
-                    <TouchableOpacity
-                    onPress = {() => this.accessInventoryDetails(item)} 
-                    style={styles.mainInventory}>
-                        <Text style={{fontWeight:'bold', color:'#eeeeee'}}>{item.name + " "}</Text>
-                        <Text style={{color:'#eeeeee'}}>{"Date " + item.date}</Text>
-                    </TouchableOpacity>
-                )}>
+                        <TouchableOpacity
+                        onPress = {() => this.accessInventoryDetails(item)} 
+                        style={styles.mainInventory}>
+                            <Text style={{fontWeight:'bold', color:'#263238'}}>{item.name + " "}</Text>
+                            <Text style={{color:'#263238'}}>{"Date " + item.date}</Text>
+                        </TouchableOpacity>
+                    )}
+                >
                 </FlatList>
             </View>
         )
@@ -71,8 +72,14 @@ const styles = StyleSheet.create(
             padding:10,
             borderRadius: 5,
             margin: 1,
-            backgroundColor: "#757575"
+            backgroundColor: "#b0bec5"
         },
+        image:{
+            width: 20,
+            height: 20,
+            margin: 5,
+            resizeMode: 'stretch',
+        }
     }
 )
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { TouchableOpacity, Text, Alert, StyleSheet, Image } from 'react-native'
 import RNBeep from 'react-native-a-beep'
 
-import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers, postInventories, postDetailsInventories } from '../WS/API'
+import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers, postInventories, postDetailsInventories, loginAPI } from '../WS/API'
 import User from '../Models/Users'
 import Product from '../Models/Products'
 import Configuration from '../Models/Configurations'
@@ -48,6 +48,12 @@ export default class SyncButton extends React.Component {
     }
 
     postSynchronisation = async () => {
+        await this.postInventories()
+        await this.postInventoryDetails()
+        return true
+    }
+
+    postInventories = async () => {
         const inventoriesData = await inventory.getInventairesNotSynced()
         if (inventoriesData.length > 0){
             console.log('posting inventaires')
@@ -56,6 +62,10 @@ export default class SyncButton extends React.Component {
                 await inventory.updateSyncedinventories()
             }
         }
+        return true
+    }
+
+    postInventoryDetails = async () => {
         const detailsData = await detail.getNotSyncedDetailsInventaires()
         if (detailsData.length > 0){
             console.log('posting details inventaires')
@@ -64,6 +74,7 @@ export default class SyncButton extends React.Component {
                 await detail.updateSyncedDetailsInventaires()
             }
         }
+        return true
     }
 
     SyncTables = async (results) => {

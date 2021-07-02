@@ -28,25 +28,31 @@ export default class Products extends React.Component {
         this.get_Products()
     }
 
-    _renderItem = ({item}) => (
+    _renderItem({item}){
+        return(
         <View 
         style={styles.table_row}>
             <Text style={[styles.table_row_txt, {width: "50%"}]}>{item.code}</Text>
             <Text style={[styles.table_row_txt, {width: "50%"}]}>{item.name}</Text>
         </View>
-    )
+        )
+    }
+
+    keyExtractor(item){
+        return item.id
+    }
 
     render(){
         return(
             <View style={styles.main_container} >
-                <View style={{alignItems: 'center', justifyContent: 'center', height:"80%"}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', height:"95%"}}>
                     <View style={styles.table_header}>
                         <Text style={[styles.table_header_txt, {width: "50%"}]}>Code</Text>
                         <Text style={[styles.table_header_txt, {width: "50%"}]}>Name</Text>
                     </View>
                     <FlatList
                         data={this.state.Productslist}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={this.keyExtractor}
                         renderItem={this._renderItem}
                         >
                     </FlatList>

@@ -49,7 +49,7 @@ class Inventories extends React.Component
         this.setState({inventaires:[]})
     }
 
-    submit_inventaire = async ()=>{
+    submit_inventaire = async () => {
         let today = new Date()
         let completeDate = today.getDate()+"/"+parseInt(today.getMonth()+1)+"/"+today.getFullYear()
         this.setState({ toAdd: !this.state.toAdd })
@@ -128,7 +128,7 @@ const styles = StyleSheet.create(
             borderWidth: 1,
             borderRadius: 5,
             margin: 1,
-            backgroundColor: "#2196F3"
+            backgroundColor: "#455a64"
         },
         addButton:{
             backgroundColor:'grey', 
