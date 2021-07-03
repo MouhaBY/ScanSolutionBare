@@ -37,6 +37,7 @@ export async function getWhatToSync(){
         return results
     }
     catch(err){
+        console.log(err)
         return { results: [] }
     }
 }
@@ -49,6 +50,7 @@ export async function getProducts() {
         return results
     }
     catch(err){
+        console.log(err)
         return { results: [] }
     }
 }
@@ -81,6 +83,18 @@ export async function getConfiguration() {
     let serverAddress = getAddress()
     try{
         const response = await fetch('http://'+serverAddress+'/api/configurations/all')
+        const { results } = await response.json()
+        return results
+    }
+    catch(err){
+        return { results: [] }
+    }
+}
+
+export async function getInventories() {
+    let serverAddress = getAddress()
+    try{
+        const response = await fetch('http://'+serverAddress+'/api/inventories/all')
         const { results } = await response.json()
         return results
     }

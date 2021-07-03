@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, TouchableOpacity, Text, StyleSheet, Button, Image, ScrollView} from 'react-native'
+import {View, TouchableOpacity, Text, StyleSheet, Image, ScrollView} from 'react-native'
 import { connect } from 'react-redux'
 import BottomBar from './BottomBar'
 import {LOGIN, LOGOUT} from '../Redux/Reducers/authenticationReducer'

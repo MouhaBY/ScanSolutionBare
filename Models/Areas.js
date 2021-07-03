@@ -13,7 +13,7 @@ export default class Areas{
         return new Promise((resolve, reject) => {
             db.transaction((tx) => {
                 tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS Areas (id INTEGER UNIQUE PRIMARY KEY, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
+                'CREATE TABLE IF NOT EXISTS Areas (id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL)', [], 
                 (tx, results) => { 
                     resolve(results)
                     console.log('table areas created')
@@ -43,8 +43,8 @@ export default class Areas{
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
                 db.transaction((tx) => {
-                    tx.executeSql('INSERT INTO Areas (id, code, name) VALUES (?, ?, ?)', 
-                    [data_to_insert[i].id, data_to_insert[i].code, data_to_insert[i].name],)
+                    tx.executeSql('INSERT INTO Areas (code, name) VALUES (?, ?)', 
+                    [data_to_insert[i].Code, data_to_insert[i].Name],)
                 })
             }
             resolve(console.log('Areas inserted'))

@@ -31,18 +31,18 @@ class InventorierForm extends React.Component
             message_barcode: '',
             message_location: '',
             message:'',
-            withQuantity: false,
+            withoutQuantity: false,
             withLocationVerification : true,
             withBarcodeVerification : true
         }
     }
 
     submitConfiguration = async () => {
-        await configuration.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withoutQuantity),"UnitaryInventory"])
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.state.withQuantity !== prevState.withQuantity){
+        if (this.state.withoutQuantity !== prevState.withoutQuantity){
             this.submitConfiguration()
         }
         if (this.state.location !== prevState.location || this.state.barcode !== prevState.barcode || this.state.quantity !== prevState.quantity){
@@ -72,17 +72,17 @@ class InventorierForm extends React.Component
     cast_to_bool(data_state){ if (data_state > 0) { return true } else { return false } }
 
     readConfiguration = async () => {
-        let withLocationVerificationState = await configuration.getConfiguration("withLocationVerification")
+        let withLocationVerificationState = await configuration.getConfiguration("CheckAreaInventory")
         let withLocationVerification = this.cast_to_bool(withLocationVerificationState)
         this.setState({withLocationVerification})
 
-        let withBarcodeVerificationState = await configuration.getConfiguration("withBarcodeVerification")
+        let withBarcodeVerificationState = await configuration.getConfiguration("CheckProductInventory")
         let withBarcodeVerification = this.cast_to_bool(withBarcodeVerificationState)
         this.setState({withBarcodeVerification})
 
-        let withQuantityState = await configuration.getConfiguration("withQuantity")
-        let withQuantity = this.cast_to_bool(withQuantityState)
-        this.setState({withQuantity})
+        let withQuantityState = await configuration.getConfiguration("UnitaryInventory")
+        let withoutQuantity = this.cast_to_bool(withQuantityState)
+        this.setState({withoutQuantity})
     }
 
     componentDidMount(){
@@ -177,8 +177,8 @@ class InventorierForm extends React.Component
                 </TouchableOpacity>
                 {this.props.user_token.isAdmin == 1 &&
                 <View style={styles.checkbox_container}>
-                    <Text>{this.state.withQuantity ? "Inventaire quantitatif" : "Inventaire unitaire"}</Text>
-                    <CheckBox style={{margin:5}} value={this.state.withQuantity} onValueChange={(withQuantity) => this.setState({ withQuantity })} />
+                    <Text>{this.state.withoutQuantity ? "Inventaire unitaire": "Inventaire quantitatif"}</Text>
+                    <CheckBox style={{margin:5}} value={this.state.withoutQuantity} onValueChange={(withoutQuantity) => this.setState({ withoutQuantity })} />
                 </View>
                 }
                 <View style={styles.main_container}>
@@ -206,7 +206,7 @@ class InventorierForm extends React.Component
                         blurOnSubmit={false}
                         placeholder= "Code à barre"
                         onSubmitEditing={() => { this.getBarcodeDescription(this.state.barcode).then(()=>{
-                            if (this.state.withQuantity){ this.thirdTextInput.focus() }
+                            if (!this.state.withoutQuantity){ this.thirdTextInput.focus() }
                             else { if (this.state.isFormValid) {
                                 this.verify_to_submit({Location:this.state.location, Barcode: this.state.barcode, Quantity: this.state.quantity})} } 
                             }).catch(()=>{ this.setState({barcode:''}); this.secondTextInput.focus() })}}
@@ -215,7 +215,7 @@ class InventorierForm extends React.Component
                         <Text style={styles.description}>{this.state.barcodeName}</Text>}
                         <Text style={styles.error_message}>{this.state.message_barcode}</Text>
                         <Text style={{color:'green', margin:1}}>{this.state.message}</Text>
-                        {this.state.withQuantity &&
+                        {!this.state.withoutQuantity &&
                         <View style={{width:100, alignItems:'center', marginBottom:5, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
                             <Text style={styles.text_container}>Quantité</Text>
                             <TextInput
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     title_container:{
         fontWeight:'bold',
         color:'white',
-        fontSize:20
+        fontSize:16
     },
     text_container:{
         marginRight:10,

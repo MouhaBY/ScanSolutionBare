@@ -13,7 +13,7 @@ export default class ConfigurationForm extends React.Component
         this.state = {
             withLocationVerification: false,
             withBarcodeVerification: false,
-            withQuantity: false,
+            withoutQuantity: false,
         }
     }
 
@@ -22,17 +22,17 @@ export default class ConfigurationForm extends React.Component
     cast_from_bool(bool_state){ if (bool_state == true){ return 1 } else { return 0} }
 
     readConfiguration = async () => {
-        let withLocationVerificationState = await configuration.getConfiguration("withLocationVerification")
+        let withLocationVerificationState = await configuration.getConfiguration("CheckAreaInventory")
         let withLocationVerification = this.cast_to_bool(withLocationVerificationState)
         this.setState({withLocationVerification})
 
-        let withBarcodeVerificationState = await configuration.getConfiguration("withBarcodeVerification")
+        let withBarcodeVerificationState = await configuration.getConfiguration("CheckProductInventory")
         let withBarcodeVerification = this.cast_to_bool(withBarcodeVerificationState)
         this.setState({withBarcodeVerification})
 
-        let withQuantityState = await configuration.getConfiguration("withQuantity")
-        let withQuantity = this.cast_to_bool(withQuantityState)
-        this.setState({withQuantity})
+        let withQuantityState = await configuration.getConfiguration("UnitaryInventory")
+        let withoutQuantity = this.cast_to_bool(withQuantityState)
+        this.setState({withoutQuantity})
     }
 
     componentDidMount(){
@@ -40,9 +40,9 @@ export default class ConfigurationForm extends React.Component
     }
 
     submitConfig = async () => {
-        await configuration.updateConfiguration([this.cast_from_bool(this.state.withBarcodeVerification),"withBarcodeVerification"])
-        await configuration.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"withLocationVerification"])
-        await configuration.updateConfiguration([this.cast_from_bool(this.state.withQuantity),"withQuantity"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withBarcodeVerification),"CheckProductInventory"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withLocationVerification),"CheckAreaInventory"])
+        await configuration.updateConfiguration([this.cast_from_bool(this.state.withoutQuantity),"UnitaryInventory"])
         this.props.navigation.goBack()
     }
 
@@ -60,8 +60,8 @@ export default class ConfigurationForm extends React.Component
                         <Text>{this.state.withBarcodeVerification ? "Vérification d'articles " : "Sans vérification d'articles "}</Text>
                     </View>
                     <View style={styles.checkbox_container}>
-                        <CheckBox style={{margin:5}} value={this.state.withQuantity} onValueChange={(withQuantity) => this.setState({ withQuantity })} />
-                        <Text>{this.state.withQuantity ? "Inventaire quantitatif" : "Inventaire unitaire"}</Text>
+                        <CheckBox style={{margin:5}} value={this.state.withoutQuantity} onValueChange={(withoutQuantity) => this.setState({ withoutQuantity })} />
+                        <Text>{this.state.withoutQuantity ? "Inventaire unitaire" : "Inventaire quantitatif"}</Text>
                     </View>
                 </View>
                 <Button title='Valider la configuration' onPress={()=>{this.submitConfig()}}/>

@@ -1,8 +1,8 @@
 import React from 'react'
-import { TouchableOpacity, Text, Alert, StyleSheet, Image } from 'react-native'
+import { TouchableOpacity, Text, Alert, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import RNBeep from 'react-native-a-beep'
 
-import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers, postInventories, postDetailsInventories, loginAPI } from '../WS/API'
+import { getWhatToSync, getProducts, getLocations, getConfiguration, getUsers, postInventories, postDetailsInventories,getInventories, loginAPI } from '../WS/API'
 import User from '../Models/Users'
 import Product from '../Models/Products'
 import Configuration from '../Models/Configurations'
@@ -48,7 +48,7 @@ export default class SyncButton extends React.Component {
     }
 
     postSynchronisation = async () => {
-        await this.postInventories()
+        //await this.postInventories()
         await this.postInventoryDetails()
         return true
     }
@@ -101,6 +101,7 @@ export default class SyncButton extends React.Component {
                 case 'Areas': getLocations().then(data =>{ resolve(data) }); break;
                 case 'Configuration': getConfiguration().then(data =>{ resolve(data) }); break;
                 case 'Users': getUsers().then(data =>{ resolve(data) }); break;
+                case 'Inventories': getInventories().then(data =>{ resolve(data) }); break;
                 default: resolve([]); break;
             }
         })
@@ -132,6 +133,12 @@ export default class SyncButton extends React.Component {
                     await user.insertIntoUsers(data_to_sync)
                     return(true)
                 } catch(err) { return (false) }
+            case 'Inventories': 
+                try{
+                    await inventory.DeleteTableInventories()
+                    await inventory.insertIntoInventories(data_to_sync)
+                    return(true)
+                } catch(err) { return (false) }
             default: return(false);
         }
     }
@@ -143,6 +150,7 @@ export default class SyncButton extends React.Component {
             disabled={this.state.isLoading}
             onPress={()=>{ this.SyncingAlgorithm() }}>
                 <Image style={styles.icon} source={require('../Images/index.png')}/>
+                <ActivityIndicator style={{position:'absolute', bottom:-200, right:140 }} size='large' animating={this.state.isLoading} color='#00ff00'/>
             </TouchableOpacity>
         )
     }

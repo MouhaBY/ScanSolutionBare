@@ -44,7 +44,7 @@ export default class Users{
             for (let i = 0; i < len; i++) {
                 db.transaction((tx) => {
                     tx.executeSql('INSERT INTO Users (id, username, password, contact, isAdmin) VALUES (?, ?, ?, ?, ?)', 
-                    [data_to_insert[i]._id, data_to_insert[i].username, data_to_insert[i].password, data_to_insert[i].contact, data_to_insert[i].isAdmin],)
+                    [data_to_insert[i].Id, data_to_insert[i].UserName, data_to_insert[i].UserName, data_to_insert[i].UserName, 1],)
                 })
             }
             resolve(console.log('users inserted'))

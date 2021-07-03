@@ -54,7 +54,7 @@ export default class Inventories{
             for (let i = 0; i < len; i++) {
                 db.transaction((tx) => {
                     tx.executeSql('INSERT INTO Inventories (id, name, date, state) VALUES (?, ?, ?, ?)', 
-                    [data_to_insert[i].id, data_to_insert[i].name, data_to_insert[i].date, data_to_insert[i].state])
+                    [data_to_insert[i].Id, data_to_insert[i].Name, data_to_insert[i].StartDate.substring(0, 10), data_to_insert[i].InventoryStateId])
                 })
             }
             resolve(console.log('inventaires inserted'))

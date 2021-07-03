@@ -42,9 +42,11 @@ export default class Configurations{
         return new Promise((resolve, reject) => {
             var len = data_to_insert.length;
             for (let i = 0; i < len; i++) {
+                let state = 0
+                if (data_to_insert[i].Value == "True"){ state = 1}
                 db.transaction((tx) => {
                     tx.executeSql('INSERT INTO Configuration (key, state) VALUES (?, ?)', 
-                    [data_to_insert[i].key, data_to_insert[i].state],)
+                    [data_to_insert[i].Key, state],)
                 })
             }
             resolve(console.log('configuration inserted'))
@@ -60,7 +62,7 @@ export default class Configurations{
                     var len = results.rows.length
                     if (len > 0) { 
                         resolve(results.rows.item(0).state)
-                        console.log('get configuration ' + configuration_key)
+                        console.log('get configuration ' + configuration_key + 'is ' +results.rows.item(0).state )
                     }
                     else{ reject('configuration introuvable') } 
                 })

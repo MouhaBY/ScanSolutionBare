@@ -38,7 +38,7 @@ export default class Database {
                 console.log('Creating Database')
                 await user.createTableUsers()
                 await configuration.createTableConfiguration()
-                await configuration.insertIntoConfigurations([{key:"withLocationVerification",state:0}, {key:"withBarcodeVerification",state:0}, {key:"withQuantity",state:0} ])
+                await configuration.insertIntoConfigurations([{key:"CheckAreaInventory",state:0}, {key:"CheckProductInventory",state:0}, {key:"UnitaryInventory",state:0} ])
                 await inventory.createTableInventaires()
                 await detail.createTableDetails()
                 await product.createTableProducts()
